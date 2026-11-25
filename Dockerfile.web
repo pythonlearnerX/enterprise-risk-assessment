@@ -1,0 +1,17 @@
+# Django 主站镜像（可选：只部署 NLP 服务时不需要本文件）
+# 注意：MySQL 建议用外部实例或另起 mysql 服务，这里不把数据库打进镜像。
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/python:3.12-slim
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+COPY . .
+
+EXPOSE 8021
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8021", "--noreload"]

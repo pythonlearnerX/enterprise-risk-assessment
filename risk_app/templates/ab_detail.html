@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ exp.name }} · A/B 实验{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">{{ exp.name }}</h2>
+    <div class="page-sub">{{ exp.key }} · {{ exp.get_status_display }} · {{ exp.page }}</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:ab_dashboard' %}">返回列表</a>
+    <form method="post" action="{% url 'risk_app:ab_toggle' exp.pk %}">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="toggle">
+      <button class="btn btn-sm btn-outline-primary">{% if exp.status == 'running' %}停止实验{% else %}重新开始{% endif %}</button>
+    </form>
+  </div>
+</div>
+
+<div class="glass p-3 mb-3">
+  <h6 style="color:#a5f3fc;letter-spacing:.1em;">实验设计</h6>
+  <table class="table table-sm mt-2 mb-0">
+    <tr><th style="width:130px;">假设</th><td>{{ exp.hypothesis|default:"—" }}</td></tr>
+    <tr><th>主指标</th><td>{{ exp.metric_label|default:exp.metric }}（事件名 <code>{{ exp.metric }}</code>）</td></tr>
+    <tr><th>A 组（对照）</th><td>{{ exp.variant_a }}</td></tr>
+    <tr><th>B 组（实验）</th><td>{{ exp.variant_b }}，占 {{ exp.ratio_pct }}% 流量</td></tr>
+    <tr><th>预期</th><td>A {{ exp.baseline_rate|floatformat:2 }} → B {{ exp.expected_rate|floatformat:2 }}，
+      每组需 <b>{{ need }}</b> 个样本</td></tr>
+    <tr><th>最小样本</th><td>{{ exp.min_sample }}</td></tr>
+  </table>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="stat-card"><div class="label">A 曝光</div><div class="num">{{ all.a_impression }}</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="label">B 曝光</div><div class="num">{{ all.b_impression }}</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="label">A 转化率</div><div class="num">{{ all.a_rate|floatformat:3 }}</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="label">B 转化率</div><div class="num">{{ all.b_rate|floatformat:3 }}</div></div></div>
+</div>
+
+<div class="glass p-3 mb-3">
+  <h6 style="color:#a5f3fc;letter-spacing:.1em;">统计判断</h6>
+  <table class="table table-sm mt-2 mb-0">
+    <tr><th style="width:180px;">差值（B − A）</th><td class="mono">{% if all.diff > 0 %}+{% endif %}{{ all.diff|floatformat:4 }}</td></tr>
+    <tr><th>相对提升</th><td class="mono">{% if all.lift > 0 %}+{% endif %}{{ all.lift|floatformat:2 }}</td></tr>
+    <tr><th>z 统计量</th><td class="mono">{{ all.z|floatformat:4 }}</td></tr>
+    <tr><th>p 值</th><td class="mono">{{ all.p_value|floatformat:4 }}{% if all.significant %} <span class="badge bg-success">显著</span>{% else %} <span class="badge bg-secondary">不显著</span>{% endif %}</td></tr>
+    <tr><th>95% 置信区间</th><td class="mono">[{{ all.ci_low|floatformat:4 }}, {{ all.ci_high|floatformat:4 }}]</td></tr>
+    <tr><th>结论</th><td>
+      {% if all.verdict == 'ship_b' %}<b style="color:#4ade80;">{{ all.verdict_label }}</b>
+      {% elif all.verdict == 'keep_a' %}<b style="color:#94a3b8;">{{ all.verdict_label }}</b>
+      {% else %}<b style="color:#fbbf24;">{{ all.verdict_label }}</b>{% endif %}
+      —— {{ all.reason }}
+    </td></tr>
+  </table>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.1em;">分组抽样（最近 20 条）</h6>
+      <div class="table-responsive mt-2">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>用户</th><th>分组</th><th>时间</th></tr></thead>
+          <tbody>
+            {% for a in assignments %}
+              <tr><td>{{ a.user_key }}</td><td><span class="badge {% if a.variant == 'B' %}bg-info{% else %}bg-secondary{% endif %}">{{ a.variant }}</span></td>
+                  <td class="muted">{{ a.create_time|date:"m-d H:i" }}</td></tr>
+            {% empty %}<tr><td colspan="3" class="muted">暂无分组记录</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.1em;">事件样本（最近 50 条）</h6>
+      <div class="table-responsive mt-2" style="max-height:320px;overflow:auto;">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>时间</th><th>用户</th><th>分组</th><th>事件</th><th>来源</th></tr></thead>
+          <tbody>
+            {% for e in events %}
+              <tr><td class="muted">{{ e.create_time|date:"m-d H:i" }}</td><td>{{ e.user_key }}</td>
+                  <td>{{ e.variant }}</td><td>{{ e.kind }}</td>
+                  <td>{% if e.source == 'sim' %}<span class="chip">模拟</span>{% else %}真实{% endif %}</td></tr>
+            {% empty %}<tr><td colspan="5" class="muted">暂无事件</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

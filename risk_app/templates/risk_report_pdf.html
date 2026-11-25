@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{ ent.firm_name }}-风险评估报告</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "Microsoft YaHei", "SimSun", sans-serif; color: #1f2937; font-size: 12px; line-height: 1.7; }
+  h1 { font-size: 22px; text-align: center; margin: 0 0 6px; letter-spacing: 2px; }
+  .sub { text-align: center; color: #6b7280; font-size: 11px; margin-bottom: 18px; }
+  .meta { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .meta td { border: 1px solid #d1d5db; padding: 6px 8px; }
+  .meta td.k { width: 22%; background: #f3f4f6; color: #374151; }
+  h2 { font-size: 14px; margin: 18px 0 8px; padding-left: 8px; border-left: 4px solid #0ea5e9; }
+  .score { text-align: center; margin: 10px 0 6px; }
+  .score .num { font-size: 40px; font-weight: 700; color: #0f172a; }
+  .score .lv { display: inline-block; margin-left: 10px; padding: 2px 10px; border-radius: 10px;
+               background: #fee2e2; color: #b91c1c; font-size: 12px; vertical-align: middle; }
+  table.t { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  table.t th, table.t td { border: 1px solid #d1d5db; padding: 6px 8px; text-align: center; }
+  table.t th { background: #e0f2fe; color: #0c4a6e; font-weight: 600; }
+  .note { background: #f9fafb; border: 1px dashed #cbd5e1; padding: 10px 12px; margin-top: 14px; font-size: 11px; color: #4b5563; }
+  .disclaimer { margin-top: 22px; border-top: 1px solid #e5e7eb; padding-top: 10px; font-size: 10px; color: #6b7280; }
+  .disclaimer b { color: #b91c1c; }
+  .foot { margin-top: 26px; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
+</style>
+</head>
+<body>
+  <h1>企业风险评估报告</h1>
+  <div class="sub">企业风险评估系统 · 扣分制评分（四维 × 25 分 = 100 分）</div>
+
+  <table class="meta">
+    <tr><td class="k">企业名称</td><td>{{ ent.firm_name }}</td><td class="k">统一社会信用代码</td><td>{{ ent.usc_code|default:"-" }}</td></tr>
+    <tr><td class="k">法定代表人</td><td>{{ ent.legal_rep|default:"-" }}</td><td class="k">经营状态</td><td>{{ ent.get_ope_status_display }}</td></tr>
+    <tr><td class="k">注册资本（万元）</td><td>{{ ent.reg_cap|floatformat:2 }}</td><td class="k">成立日期</td><td>{{ ent.est_date|date:"Y-m-d"|default:"-" }}</td></tr>
+  </table>
+
+  <h2>一、综合得分</h2>
+  <div class="score">
+    <span class="num">{{ calc.total|floatformat:2 }}</span>
+    <span class="lv">{{ calc.level_label }}</span>
+  </div>
+
+  <h2>二、四维得分</h2>
+  <table class="t">
+    <tr><th>维度</th><th>满分</th><th>原始三项</th><th>平均</th><th>维度得分</th><th>权重</th></tr>
+    {% for key, d in calc.dimensions.items %}
+      <tr>
+        <td>{{ d.label }}</td><td>25</td>
+        <td>{{ d.raw|join:" / " }}</td>
+        <td>{{ d.average|floatformat:2 }}</td>
+        <td><b>{{ d.score|floatformat:2 }}</b></td>
+        <td>{{ d.weight|floatformat:2 }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <h2>三、12 项指标明细</h2>
+  <table class="t">
+    <tr><th>指标</th><th>数值</th><th>指标</th><th>数值</th></tr>
+    <tr><td>cai_1（财务/近1年）</td><td>{{ risk.cai_1 }}</td><td>s_an_1（经营/近1年）</td><td>{{ risk.s_an_1 }}</td></tr>
+    <tr><td>cai_2（财务/近2年）</td><td>{{ risk.cai_2 }}</td><td>s_an_2（经营/近2年）</td><td>{{ risk.s_an_2 }}</td></tr>
+    <tr><td>cai_3（财务/近3年）</td><td>{{ risk.cai_3 }}</td><td>s_an_3（经营/近3年）</td><td>{{ risk.s_an_3 }}</td></tr>
+    <tr><td>li_an_1（合规/近1年）</td><td>{{ risk.li_an_1 }}</td><td>zhi_1（质量/近1年）</td><td>{{ risk.zhi_1 }}</td></tr>
+    <tr><td>li_an_2（合规/近2年）</td><td>{{ risk.li_an_2 }}</td><td>zhi_2（质量/近2年）</td><td>{{ risk.zhi_2 }}</td></tr>
+    <tr><td>li_an_3（合规/近3年）</td><td>{{ risk.li_an_3 }}</td><td>zhi_3（质量/近3年）</td><td>{{ risk.zhi_3 }}</td></tr>
+  </table>
+
+  <div class="note">
+    <b>评分口径：</b>{{ calc.formula }}。当前数据集采用“风险点”口径（0–25，越大越危险），
+    四维等权（各 25 分），综合得分 = 四维得分之和，范围 [0, 100]。
+    若输入为“事件次数”，同一函数按扣分制计算：维度分 = max(0, 25 − 平均次数 × 1)。
+  </div>
+
+  <div class="disclaimer">
+    <b>免责声明：</b>本报告由企业风险评估系统基于公开数据集自动生成，仅用于课程实训与内部研究，
+    不构成任何投资、信贷、法律或商业决策建议。数据可能存在缺漏、滞后或口径差异，
+    使用方应自行核实原始资料；因使用本报告产生的任何后果，系统与作者不承担责任。
+  </div>
+
+  <div class="foot">
+    <span>生成时间：{{ generated }}</span>
+    <span>报告编号：ER-{{ risk.id|stringformat:"06d" }}</span>
+  </div>
+</body>
+</html>

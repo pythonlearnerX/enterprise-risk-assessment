@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}管理后台 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">管理后台</h2>
+    <div class="page-sub">自建后台：数据概览、账号与权限、AI 使用、实验与预警入口。仅管理员可见。</div>
+  </div>
+  <span class="chip">当前角色：{{ role_label }}</span>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:enterprise_list' %}">
+      <div class="label">企业总数 <span class="go">查看 →</span></div>
+      <div class="num">{{ kpi.enterprises }}</div>
+      <div class="page-sub mt-1">风险记录 {{ kpi.risks }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:risk_list' %}?level=high">
+      <div class="label">高风险企业 <span class="go">查看 →</span></div>
+      <div class="num" style="color:#fda4af;">{{ kpi.high }}</div>
+      <div class="page-sub mt-1">占 {{ kpi.high_rate }}%</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:manage_users' %}">
+      <div class="label">系统账号 <span class="go">管理 →</span></div>
+      <div class="num">{{ kpi.users }}<span class="unit">个</span></div>
+      <div class="page-sub mt-1">管理员 {{ kpi.admins }} 个</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:ai_insights' %}">
+      <div class="label">AI 解读记录 <span class="go">查看 →</span></div>
+      <div class="num">{{ kpi.insights }}</div>
+      <div class="page-sub mt-1">配置 Key 的账号 {{ kpi.ai_ready }}</div>
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-2">管理入口</h6>
+      <div class="row g-2">
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'risk_app:manage_users' %}">用户与角色</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'risk_app:ai_insights' %}">AI 解读记录</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'risk_app:alerts' %}">预警订阅</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'risk_app:ab_dashboard' %}">A/B 实验</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'risk_app:chart_analysis' %}">分析看板</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100 py-3" href="/admin/" target="_blank">数据后台（Django Admin）</a></div>
+      </div>
+      <div class="page-sub mt-2">「数据后台」是 Django 自带的后台，用于批量改数据；本页是自建后台，用于业务运维。</div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-2">系统状态</h6>
+      <table class="table table-sm mb-0">
+        <tr><th style="width:120px;">数据库</th><td>{{ kpi.db_status }}</td></tr>
+        <tr><th>数据规模</th><td>{{ kpi.enterprises }} 企业 / {{ kpi.risks }} 风险记录</td></tr>
+        <tr><th>AI 可用账号</th><td>{{ kpi.ai_ready }} / {{ kpi.users }}</td></tr>
+        <tr><th>预警规则</th><td>{{ kpi.alerts }} 条</td></tr>
+        <tr><th>实验</th><td>{{ kpi.experiments }} 个</td></tr>
+        <tr><th>最近审计</th><td>{{ kpi.last_audit }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="glass p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">最近操作日志</h6>
+        <span class="page-sub">取最近 10 条 AuditLog</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>时间</th><th>账号</th><th>动作</th><th>对象</th><th>IP</th></tr></thead>
+          <tbody>
+            {% for log in logs %}
+              <tr>
+                <td class="muted">{{ log.create_time|date:"m-d H:i" }}</td>
+                <td>{{ log.user.username|default:"—" }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.target|default:"—" }}</td>
+                <td class="muted">{{ log.ip|default:"—" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="muted">暂无日志</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

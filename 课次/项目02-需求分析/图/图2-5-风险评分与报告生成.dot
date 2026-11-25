@@ -1,0 +1,17 @@
+digraph G {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.55, ranksep=0.32, pad=0.15];
+  node [fontname="Microsoft YaHei", fontsize=10, penwidth=1.0, shape=box, style="rounded,filled", fillcolor="#EAF1FB"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#555555", arrowsize=0.7];
+  start [shape=ellipse, style=filled, fillcolor="#E8F5E9", label="开始"];
+  end [shape=ellipse, style=filled, fillcolor="#FDE7E7", label="结束"];
+
+  start -> pick; pick [label="选择企业"];
+  pick -> has [label=" "]; has [label="是否有风险记录?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  has -> none [label=" 否"]; none [label="提示暂无风险数据"]; none -> end;
+  has -> calc [label=" 是"]; calc [label="按四维度计算得分"];
+  calc -> level [label=" "]; level [label="判定风险等级"];
+  level -> render [label=" "]; render [label="渲染报告页"];
+  render -> down [label=" "]; down [label="是否下载 PDF?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  down -> pdf [label=" 是"]; pdf [label="生成并下载 PDF"]; pdf -> end;
+  down -> end [label=" 否"];
+}

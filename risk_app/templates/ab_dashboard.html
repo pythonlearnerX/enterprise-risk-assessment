@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}A/B 实验 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">A/B 实验</h2>
+    <div class="page-sub">假设 → 指标 → 随机分组 → 采集 → 统计判断 → 决策落地；同一用户分组固定。</div>
+  </div>
+  <span class="chip">{{ rows|length }} 个实验</span>
+</div>
+
+{% for row in rows %}
+  {% with exp=row.exp real=row.real all=row.all %}
+  <div class="glass p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <strong style="font-size:16px;">{{ exp.name }}</strong>
+          <span class="chip">{{ exp.get_status_display }}</span>
+          {% if row.has_sim %}<span class="chip">含模拟数据</span>{% endif %}
+        </div>
+        <div class="page-sub mt-1">假设：{{ exp.hypothesis|default:"—" }}</div>
+        <div class="page-sub">主指标：{{ exp.metric_label|default:exp.metric }} ·
+          页面：{{ exp.page|default:"—" }} ·
+          A＝{{ exp.variant_a }} / B＝{{ exp.variant_b }}（B 占 {{ exp.ratio_pct }}%）</div>
+      </div>
+      <div class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:ab_detail' exp.pk %}">详情</a>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-3">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr><th>分组</th><th>曝光</th><th>转化</th><th>转化率</th><th>相对 A</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A · {{ exp.variant_a }}</td>
+            <td class="mono">{{ all.a_impression }}</td>
+            <td class="mono">{{ all.a_convert }}</td>
+            <td class="mono">{{ all.a_rate|floatformat:4 }}</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>B · {{ exp.variant_b }}</td>
+            <td class="mono">{{ all.b_impression }}</td>
+            <td class="mono">{{ all.b_convert }}</td>
+            <td class="mono">{{ all.b_rate|floatformat:4 }}</td>
+            <td class="mono">{% if all.lift > 0 %}+{% endif %}{{ all.lift|floatformat:2 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3 align-items-center mt-2 small">
+      <span>差值 <b class="mono">{% if all.diff > 0 %}+{% endif %}{{ all.diff|floatformat:4 }}</b></span>
+      <span>z <b class="mono">{{ all.z|floatformat:3 }}</b></span>
+      <span>p 值 <b class="mono">{{ all.p_value|floatformat:4 }}</b></span>
+      <span>95%CI [{{ all.ci_low|floatformat:3 }}, {{ all.ci_high|floatformat:3 }}]</span>
+      <span>每组建议样本 <b class="mono">{{ all.need }}</b></span>
+      {% if all.verdict == 'ship_b' %}
+        <span class="badge bg-success">{{ all.verdict_label }}</span>
+      {% elif all.verdict == 'keep_a' %}
+        <span class="badge bg-secondary">{{ all.verdict_label }}</span>
+      {% else %}
+        <span class="badge bg-warning text-dark">{{ all.verdict_label }}</span>
+      {% endif %}
+      <span class="muted">{{ all.reason }}</span>
+    </div>
+    {% if exp.decision %}<div class="page-sub mt-1">已落库结论：{{ exp.decision }}</div>{% endif %}
+  </div>
+  {% endwith %}
+{% empty %}
+  <div class="glass p-4">
+    <p class="mb-1">还没有实验。</p>
+    <p class="page-sub mb-0">运行 <code>python manage.py ab_seed</code> 创建示例实验，
+      再运行 <code>ab_simulate</code> 生成模拟流量看统计效果。</p>
+  </div>
+{% endfor %}
+
+<div class="glass p-3">
+  <h6 style="color:#a5f3fc;letter-spacing:.1em;">口径说明</h6>
+  <ul class="page-sub mb-0">
+    <li>分组：<code>md5(实验标识 + 用户ID)</code> 取模，同一用户永远同组，刷新不会换组；</li>
+    <li>曝光：同一用户同一天只记一次，避免反复刷新灌水；</li>
+    <li>转化：主指标事件（如导出 CSV、进入企业详情），由服务端记录；</li>
+    <li>检验：两独立比例 z 检验（pooled），显著性阈值 α=0.05；</li>
+    <li>决策：p&lt;0.05 且 B 更高 → 上线 B；B 更低 → 保留 A；不显著 → 继续采集。</li>
+  </ul>
+</div>
+{% endblock %}

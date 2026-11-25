@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}企业风险评估系统{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<nav class="navbar app-navbar fixed-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="{% url 'risk_app:index' %}">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2 28 9v14L16 30 4 23V9z" stroke="#22d3ee" stroke-width="1.4"/>
+        <path d="M16 8.5 23 13v9l-7 4.5L9 22v-9z" fill="rgba(34,211,238,.18)" stroke="#5eead4" stroke-width="1"/>
+        <circle cx="16" cy="17" r="2.4" fill="#5eead4"/>
+      </svg>
+      企业风险评估系统
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      {% if user.is_authenticated %}
+        <span class="top-user">
+          {{ user.username }}
+          {% if user.is_superuser or user.profile.role == 'admin' %}
+            <span class="role-chip admin">管理员</span>
+          {% else %}
+            <span class="role-chip">普通用户</span>
+          {% endif %}
+        </span>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:logout' %}"
+           title="退出当前账号，回登录页换人">切换账号</a>
+      {% else %}
+        <a class="btn btn-sm btn-primary" href="{% url 'risk_app:login' %}">登录</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+{% if user.is_authenticated %}
+<aside class="sidebar">
+  <div class="sidebar-title">工作台</div>
+  <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'risk_app:index' %}">概览</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'enterprise_list' %}active{% endif %}" href="{% url 'risk_app:enterprise_list' %}">企业信息</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'risk_list' %}active{% endif %}" href="{% url 'risk_app:risk_list' %}">风险行情</a>
+
+  <div class="sidebar-title">分析</div>
+  <a class="nav-link {% if request.resolver_match.url_name == 'predict' %}active{% endif %}" href="{% url 'risk_app:predict' %}">AI 风险预估</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'chart_enterprise' %}active{% endif %}" href="{% url 'risk_app:chart_enterprise' %}">企业可视化</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'chart_risk' or request.resolver_match.url_name == 'risk_detail' %}active{% endif %}" href="{% url 'risk_app:chart_risk' %}">风险可视化</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'chart_analysis' %}active{% endif %}" href="{% url 'risk_app:chart_analysis' %}">分析看板</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'chart_compare' %}active{% endif %}" href="{% url 'risk_app:chart_compare' %}">企业对比</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'alerts' %}active{% endif %}" href="{% url 'risk_app:alerts' %}">预警订阅</a>
+  {% if user.is_superuser or user.profile.role == 'admin' %}
+  <a class="nav-link {% if 'ab_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'risk_app:ab_dashboard' %}">A/B 实验</a>
+  {% endif %}
+  <a class="nav-link {% if request.resolver_match.url_name == 'ai_settings' %}active{% endif %}" href="{% url 'risk_app:ai_settings' %}">AI 平台配置</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'model_show' %}active{% endif %}" href="{% url 'risk_app:model_show' %}">本地模型识别</a>
+
+  {% if user.is_superuser or user.profile.role == 'admin' %}
+  <div class="sidebar-title">管理</div>
+  <a class="nav-link {% if request.resolver_match.url_name == 'console' %}active{% endif %}" href="{% url 'risk_app:console' %}">管理后台</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}" href="{% url 'risk_app:manage_users' %}">用户管理</a>
+  <a class="nav-link {% if request.resolver_match.url_name == 'ai_insights' %}active{% endif %}" href="{% url 'risk_app:ai_insights' %}">AI 解读记录</a>
+  <a class="nav-link" href="/admin/" target="_blank">数据后台</a>
+  {% endif %}
+</aside>
+{% endif %}
+
+<main class="main-content {% if not user.is_authenticated %}no-sidebar{% endif %}">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

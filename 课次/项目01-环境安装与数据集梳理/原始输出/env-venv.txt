@@ -1,0 +1,28 @@
+D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> call .venv\Scripts\activate.bat
+
+(.venv) D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> where python
+D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui\.venv\Scripts\python.exe
+D:\1\anacoda\python.exe
+C:\Users\xueru\AppData\Local\Microsoft\WindowsApps\python.exe
+
+(.venv) D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> python -c "import sys; print('sys.prefix =', sys.prefix); print('sys.executable =', sys.executable)"
+sys.prefix = D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui\.venv
+sys.executable = D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui\.venv\Scripts\python.exe
+
+(.venv) D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> pip list
+Package         Version
+--------------- -------
+asgiref         3.12.1
+defusedxml      0.7.1
+Django          6.1.2
+fonttools       4.67.0
+fpdf2           2.8.9
+numpy           2.5.4
+pandas          3.0.6
+pillow          13.0.0
+pip             24.2
+PyMySQL         1.2.3
+python-dateutil 3.0.0
+six             1.17.0
+sqlparse        0.6.0
+tzdata          2026.5

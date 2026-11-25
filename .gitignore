@@ -1,0 +1,39 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# ---------- 本机配置（含密码，绝不入库）----------
+.env
+.env.local
+configs/*.local.*
+*.local.ini
+
+# ---------- 临时与日志 ----------
+_tmp/
+*.log
+outputs/tmp/
+
+# ---------- 大数据：只留 100 行样本 ----------
+dataset/*.csv
+dataset/*.xlsx
+!dataset/*_sample.csv
+
+# ---------- 课次里的截图与离线 HTML（体积大，可再生成）----------
+# 说明见 docs/ASSETS.md；课次里的 md/docx/pdf 与 图/*.png 仍然入库
+课次/**/截图/
+课次/**/_html/
+课次/*/提交/*.zip
+
+# ---------- 系统与编辑器 ----------
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Office 临时锁文件 ----------
+~$*

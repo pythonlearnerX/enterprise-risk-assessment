@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}概览 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">{% if user.is_superuser or user.profile.role == 'admin' %}管理驾驶舱{% else %}我的工作台{% endif %}</h2>
+    <div class="page-sub">
+      {% if user.is_superuser or user.profile.role == 'admin' %}
+        管理员视角：全量企业、风险分布、地域分布、账号与权限
+      {% else %}
+        普通用户视角：业务查询、风险分布、地域分布、个人 AI 配置
+      {% endif %}
+    </div>
+  </div>
+  <span class="chip">数据源 MySQL · risk_assessment</span>
+</div>
+
+{% if error %}
+  <div class="alert alert-danger">数据库连接异常：{{ error }}</div>
+{% endif %}
+
+<!-- ============ 第一部分：数据概览 ============ -->
+<h6 class="mb-2" style="color:#67e8f9;letter-spacing:.16em;">一、数据概览</h6>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <a class="stat-card h-100 d-block stat-link" href="{% url 'risk_app:enterprise_list' %}">
+      <div class="label">企业总数 <span class="go">查看 →</span></div>
+      <div class="num">{{ enterprise_count }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card h-100 d-block stat-link" href="{% url 'risk_app:risk_list' %}">
+      <div class="label">风险记录 <span class="go">查看 →</span></div>
+      <div class="num">{{ risk_count }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card h-100 d-block stat-link" href="{% url 'risk_app:risk_list' %}?level=high">
+      <div class="label">高风险 <span class="go">查看 →</span></div>
+      <div class="num" style="color:#fda4af;text-shadow:0 0 18px rgba(251,113,133,.35);">{{ high_count }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    {% if user.is_superuser or user.profile.role == 'admin' %}
+      <a class="stat-card h-100 d-block stat-link" href="{% url 'risk_app:manage_users' %}">
+        <div class="label">系统账号 <span class="go">管理 →</span></div>
+        <div class="num">{{ user_count }}<span class="unit">个</span></div>
+        <div class="page-sub mt-1">管理员 {{ admin_count }} 个</div>
+      </a>
+    {% else %}
+      <a class="stat-card h-100 d-block stat-link" href="{% url 'risk_app:ai_settings' %}">
+        <div class="label">AI 解读 <span class="go">配置 →</span></div>
+        <div class="num" style="font-size:22px;line-height:1.6;">
+          {% if ai_ready %}已就绪{% else %}未配置{% endif %}
+        </div>
+        <div class="page-sub mt-1">
+          {% if ai_ready %}{{ ai_model }}{% else %}<a href="{% url 'risk_app:ai_settings' %}">去配置 API Key</a>{% endif %}
+        </div>
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ============ 第二部分：风险画像 ============ -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h6 class="mb-0" style="color:#67e8f9;letter-spacing:.16em;">二、风险画像</h6>
+  <a class="small" href="{% url 'risk_app:chart_risk' %}">去风险可视化 →</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-5">
+    <div class="glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">风险等级分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_risk"
+                data-ai-target="level" data-ai-title="风险等级分布">AI 解读</button>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：看高/中/低三档的占比，判断整体风险结构。</div>
+      <div id="home-level" class="chart-box" style="height:300px;"></div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">综合得分分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_risk"
+                data-ai-target="score" data-ai-title="综合得分分布">AI 解读</button>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：看主体落在哪一段；右侧长尾就是高风险企业。</div>
+      <div id="home-score" class="chart-box" style="height:300px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 第三部分：重庆地域分布 ============ -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h6 class="mb-0" style="color:#67e8f9;letter-spacing:.16em;">三、重庆地域分布</h6>
+  <a class="small" href="{% url 'risk_app:chart_map' %}">查看大图 →</a>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-8">
+    <div class="glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">企业区县分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_map"
+                data-ai-title="重庆企业分布">AI 解读</button>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">
+        读法：颜色越亮企业越多；点区县可下钻到该区企业列表。
+        覆盖 {{ map_districts }} 个区县、{{ map_total }} 家企业。
+      </div>
+      <div id="home-map" class="chart-box" style="height:420px;"></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="glass p-3 h-100">
+      <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-2">企业最多的区县</h6>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>区县</th><th>企业</th><th>高风险</th></tr></thead>
+        <tbody>
+          {% for r in map_rows %}
+            <tr>
+              <td><a href="{% url 'risk_app:enterprise_list' %}?district={{ r.code }}">{{ r.name }}</a></td>
+              <td class="mono">{{ r.count }}</td>
+              <td class="mono" style="color:#fca5a5;">{{ r.high }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" class="muted">暂无数据</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 下方：TOP5 / 快捷入口 / 预警 ============ -->
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.12em;">风险得分 TOP 5</h6>
+        <a class="small" href="{% url 'risk_app:risk_list' %}">查看全部 →</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead><tr><th>企业名称</th><th>得分</th><th>等级</th><th></th></tr></thead>
+          <tbody>
+            {% for r in top_risks %}
+              <tr>
+                <td>{{ r.name }}</td>
+                <td class="mono">{{ r.total_risk_score|floatformat:2 }}</td>
+                <td>
+                  {% if r.risk_level == 'high' %}<span class="badge bg-danger">高风险</span>
+                  {% elif r.risk_level == 'medium' %}<span class="badge bg-warning">中风险</span>
+                  {% else %}<span class="badge bg-success">低风险</span>{% endif %}
+                </td>
+                <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:risk_detail' r.id %}">详情</a></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center muted py-4">暂无风险记录</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="glass p-3 mb-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.12em;">快捷入口</h6>
+      <div class="row g-2 mt-1">
+        <div class="col-6"><a class="btn btn-outline-primary w-100" href="{% url 'risk_app:enterprise_list' %}">企业库</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100" href="{% url 'risk_app:risk_list' %}">风险库</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100" href="{% url 'risk_app:chart_analysis' %}">分析看板</a></div>
+        <div class="col-6"><a class="btn btn-outline-primary w-100" href="{% url 'risk_app:chart_compare' %}">企业对比</a></div>
+      </div>
+    </div>
+
+    <div class="glass p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.12em;">预警订阅</h6>
+        <a class="small" href="{% url 'risk_app:alerts' %}">管理规则 →</a>
+      </div>
+      {% if alerts %}
+        <div class="row g-2">
+          {% for a in alerts %}
+            <div class="col-6">
+              <div class="stat-card h-100">
+                <div class="label">{{ a.rule.name }}</div>
+                <div class="num">{{ a.count }}<span class="unit">条</span></div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="page-sub mb-0">还没有规则；去 <a href="{% url 'risk_app:alerts' %}">预警订阅</a> 添加。</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ levels|json_script:"home-levels" }}
+{{ hist|json_script:"home-hist" }}
+{{ map_data|json_script:"home-map-data" }}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+(function () {
+  const LEVELS = JSON.parse(document.getElementById("home-levels").textContent);
+  const HIST = JSON.parse(document.getElementById("home-hist").textContent);
+  const MAP = JSON.parse(document.getElementById("home-map-data").textContent);
+
+  // 等级分布
+  makeChart(document.getElementById("home-level"), {
+    tooltip: {trigger: "item", formatter: "{b}：{c} 家（{d}%）"},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    color: ["#34d399", "#fbbf24", "#fb7185"],
+    series: [{
+      type: "pie", radius: ["46%", "68%"], center: ["50%", "44%"],
+      label: {color: "#cbd5e1", formatter: "{b}\n{c} 家"},
+      data: LEVELS.map(x => ({name: x[0], value: x[1]}))
+    }]
+  });
+
+  // 得分分布
+  makeChart(document.getElementById("home-score"), {
+    tooltip: {trigger: "axis"},
+    grid: {left: 48, right: 16, top: 20, bottom: 40},
+    xAxis: Object.assign({type: "category", data: HIST.map(x => x[0])}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    series: [{
+      type: "bar", barWidth: "58%", data: HIST.map(x => x[1]),
+      itemStyle: {borderRadius: [4, 4, 0, 0]}
+    }]
+  });
+
+  // 分段色带：企业数跨度 1–1400，连续渐变会把多数区县压成一色
+  function mapVisualMap(rows) {
+    const v = rows.map(r => r.value).filter(x => x > 0).sort((a, b) => a - b);
+    const q = p => v[Math.min(v.length - 1, Math.floor(v.length * p))] || 1;
+    const cuts = [...new Set([q(0.2), q(0.5), q(0.8), q(0.95)].map(x => Math.round(x)))];
+    const pieces = [{min: 0, max: cuts[0]}];
+    for (let i = 0; i < cuts.length - 1; i++) pieces.push({min: cuts[i], max: cuts[i + 1]});
+    pieces.push({min: cuts[cuts.length - 1]});
+    const colors = ["#155e75", "#0891b2", "#22d3ee", "#a5f3fc", "#fde68a", "#fb923c"];
+    return {
+      type: "piecewise", left: 8, bottom: 8,
+      pieces: pieces.map((p, i) => ({
+        ...p,
+        label: (p.min || 0) + (p.max ? "–" + p.max : "+") + " 家",
+        color: colors[Math.min(i, colors.length - 1)]
+      })),
+      textStyle: {color: "#cbd5e1", fontSize: 10}, itemWidth: 14, itemHeight: 9
+    };
+  }
+
+  // 重庆地图
+  fetch("{% static 'json/chongqing.json' %}")
+    .then(r => r.json())
+    .then(geo => {
+      echarts.registerMap("chongqing", geo);
+      const chart = makeChart(document.getElementById("home-map"), {
+        tooltip: {
+          formatter: p => p.data
+            ? `<b>${p.data.name}</b><br/>企业 ${p.data.value} 家<br/>高风险 ${p.data.high} 家（${p.data.rate}%）`
+            : p.name
+        },
+        visualMap: mapVisualMap(MAP),
+        series: [{
+          type: "map", map: "chongqing", zoom: 1.1,
+          itemStyle: {areaColor: "#12314a", borderColor: "#67e8f9", borderWidth: 1},
+          emphasis: {itemStyle: {areaColor: "#22d3ee"}, label: {color: "#0b1220"}},
+          label: {show: false},
+          data: MAP
+        }]
+      });
+      chart.on("click", p => {
+        if (p.data && p.data.code) {
+          location.href = "{% url 'risk_app:enterprise_list' %}?district=" + p.data.code;
+        }
+      });
+    })
+    .catch(err => {
+      const box = document.getElementById("home-map");
+      if (box) box.innerHTML = '<div class="page-sub p-3">地图资源加载失败：' + err + '</div>';
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> .venv\Scripts\python.exe --version
+Python 3.12.7
+
+D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> where python
+D:\1\anacoda\python.exe
+C:\Users\xueru\AppData\Local\Microsoft\WindowsApps\python.exe
+
+D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui> .venv\Scripts\python.exe -m pip --version
+pip 24.2 from D:\xueru\Documents\dsh work\03_项目\risk_project_xuerui\.venv\Lib\site-packages\pip (python 3.12)

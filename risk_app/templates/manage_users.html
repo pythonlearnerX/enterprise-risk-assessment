@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}用户管理 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">用户管理</h2>
+    <div class="page-sub">仅管理员可见：账号、角色、部门与 AI 配置状态</div>
+  </div>
+  <span class="chip">共 {{ total }} 个账号</span>
+</div>
+
+<div class="glass p-3">
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr><th>用户名</th><th>角色</th><th>部门</th><th>最近登录</th><th>AI Key</th><th>状态</th></tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.user.username }}</td>
+            <td>
+              {% if row.role == '管理员' %}
+                <span class="badge bg-warning">{{ row.role }}</span>
+              {% else %}
+                <span class="badge bg-success">{{ row.role }}</span>
+              {% endif %}
+            </td>
+            <td>{{ row.department|default:"—" }}</td>
+            <td class="muted">{{ row.last_login|date:"Y-m-d H:i"|default:"从未登录" }}</td>
+            <td>
+              {% if row.has_ai %}<span class="chip">已配置</span>{% else %}<span class="muted">未配置</span>{% endif %}
+            </td>
+            <td>
+              {% if row.user.is_active %}<span class="muted">正常</span>{% else %}<span class="badge bg-danger">停用</span>{% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center muted py-4">暂无账号</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p class="page-sub mt-3">
+  普通用户访问此页会被重定向到登录页/首页；账号的增删改仍可在 Django 后台完成。
+</p>
+{% endblock %}

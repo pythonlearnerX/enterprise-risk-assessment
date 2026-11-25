@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>登录页面与权限雏形 · 汇报</title>
+<style>
+  :root { --navy:#1F3A5F; --blue:#4E6E8E; --teal:#7FA6A0; --grey:#6B7280; --line:#D5DCE6; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:#e9edf3; }
+  body { font-family:"Times New Roman","SimSun",serif; color:#1a1a1a; }
+  .slide { position:relative; width:1280px; height:720px; margin:0 auto 26px; background:#fff;
+           padding:52px 62px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.12); }
+  .num { position:absolute; top:20px; right:28px; font-size:14px; color:#9aa3af; letter-spacing:.08em; }
+  .foot { position:absolute; left:62px; bottom:18px; font-size:12px; color:#9aa3af; letter-spacing:.05em; }
+  .kicker { font-size:14px; color:var(--blue); letter-spacing:.18em; margin-bottom:6px; }
+  h1 { font-size:40px; line-height:1.25; margin:0 0 8px; color:var(--navy); }
+  h2 { font-size:29px; margin:0 0 6px; color:var(--navy); }
+  .sub { font-size:16px; color:var(--grey); margin-bottom:20px; }
+  ul { margin:0; padding-left:20px; }
+  li { font-size:18px; line-height:1.6; margin-bottom:8px; }
+  li b { color:var(--navy); }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:center; }
+  figure { margin:0; text-align:center; }
+  figure img { max-width:100%; max-height:430px; border:1px solid var(--line); }
+  figcaption { font-size:12px; color:var(--grey); margin-top:6px; }
+  .cover { display:flex; flex-direction:column; justify-content:center; height:100%; }
+  .band { display:inline-block; background:var(--navy); color:#fff; padding:7px 14px; font-size:14px; letter-spacing:.14em; margin-bottom:26px; }
+  .cover h1 { font-size:50px; margin-bottom:10px; }
+  .cover .en { font-size:15px; color:#98a2b3; letter-spacing:.05em; margin-bottom:40px; }
+  .cover .who { font-size:17px; line-height:1.9; color:#333; }
+  .cover .who span { color:var(--grey); }
+  .cards3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:14px; }
+  .card { border:1px solid var(--line); padding:18px 20px; background:#f7f9fc; }
+  .card .t { font-size:13px; color:var(--blue); letter-spacing:.1em; }
+  .card .h { font-size:21px; color:var(--navy); margin:6px 0 8px; }
+  .card .d { font-size:14px; color:#444; line-height:1.6; }
+  table { border-collapse:collapse; width:100%; font-size:14.5px; }
+  th,td { border:1px solid var(--line); padding:7px 9px; text-align:left; }
+  th { background:var(--navy); color:#fff; font-weight:400; }
+  tr:nth-child(even) td { background:#f7f9fc; }
+  code { font-family:Consolas,"NSimSun",monospace; font-size:13px; background:#f1f3f6; padding:1px 4px; }
+  pre { background:#0f1720; color:#d8dee6; padding:16px 18px; font:13px/1.55 Consolas,"NSimSun",monospace;
+        margin:0; border-radius:3px; overflow:hidden; }
+  .kv { font-size:15px; line-height:1.9; }
+  .kv b { color:var(--navy); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .shot { border:1px solid var(--line); width:100%; }
+  .cap { font-size:12px; color:var(--grey); margin-top:5px; text-align:center; }
+  @page { size:13.333in 7.5in; margin:0; }
+  @media print {
+    html,body{background:#fff;}
+    .slide{margin:0;box-shadow:none;page-break-after:always;break-after:page;}
+    .slide:last-child{page-break-after:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide">
+  <div class="num">01</div>
+  <div class="cover">
+    <div><span class="band">模型开发综合实训 · 课次 8</span></div>
+    <h1>登录页面与权限雏形</h1>
+    <div class="en">Users · Login Page · Decorators</div>
+    <div class="who">
+      汇报人：薛瑞　<span>249990736</span><br>
+      班级：24 智科 4 班　<span>人工智能与计算机学院</span><br>
+      指导教师：王恒达　<span>2026 年 11 月</span>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="num">02</div>
+  <div class="kicker">今日任务</div>
+  <h2>三件事：账号、登录页、装饰器</h2>
+  <div class="sub">只讲今天完成的这三块，不讲之前的工程和设计。</div>
+  <div class="cards3">
+    <div class="card">
+      <div class="t">任务 1</div>
+      <div class="h">创建用户</div>
+      <div class="d">超级用户 admin（管理员）<br>普通用户 zhangsan（信贷部）<br>各自补 UserProfile 扩展记录</div>
+    </div>
+    <div class="card">
+      <div class="t">任务 2</div>
+      <div class="h">登录页面</div>
+      <div class="d">视图：authenticate / login / logout<br>模板：CSRF、密码掩码、记住我<br>路由：/login/ 与 /logout/</div>
+    </div>
+    <div class="card">
+      <div class="t">任务 3</div>
+      <div class="h">装饰器配置</div>
+      <div class="d">@login_required 保护首页与列表<br>LOGIN_URL + next 回跳<br>菜单按角色显示</div>
+    </div>
+  </div>
+  <div style="margin-top:30px;">
+    <table style="font-size:15px;">
+      <tr><th style="width:25%">① 建账号</th><th>② 配路由 / 视图</th><th>③ 写模板</th><th>④ 加装饰器验证</th></tr>
+      <tr><td>admin + zhangsan<br>UserProfile 扩展</td><td>/login/、/logout/<br>视图 5 个分支</td><td>CSRF、required<br>记住我、next</td><td>302 → 登录 → 回跳<br>无 Token 403</td></tr>
+    </table>
+  </div>
+  <div style="margin-top:22px;padding:13px 18px;background:#F3F6FA;border-left:4px solid #1F3A5F;font-size:15px;color:#333;">
+    <b style="color:#1F3A5F;">验证结论：</b>未登录 302 跳登录页，登录后回到原页面；密码库里是 PBKDF2 哈希；无 CSRF 的 POST 返回 403。
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="num">03</div>
+  <div class="kicker">任务 1 · 账号</div>
+  <h2>两个账号，两种角色</h2>
+  <table style="margin-top:10px;">
+    <tr><th>用户名</th><th>密码</th><th>角色</th><th>UserProfile</th><th>能看到什么</th></tr>
+    <tr><td>admin</td><td>Admin@2026</td><td>管理员（超级用户）</td><td>role=admin</td><td>全部菜单 + 后台管理</td></tr>
+    <tr><td>zhangsan</td><td>test123456</td><td>普通用户</td><td>role=normal，信贷部</td><td>业务菜单，无后台入口</td></tr>
+  </table>
+  <div class="grid2" style="margin-top:22px;align-items:start;">
+    <div class="kv">
+      <p><b>怎么建的：</b></p>
+      <ul style="font-size:16px;">
+        <li><code>createsuperuser</code> 建 admin</li>
+        <li><code>create_user()</code> 建 zhangsan，密码自动哈希</li>
+        <li><code>UserProfile.objects.update_or_create()</code> 补扩展记录</li>
+      </ul>
+    </div>
+    <div class="kv">
+      <p><b>密码怎么存的：</b></p>
+      <ul style="font-size:16px;">
+        <li>库里是 <code>pbkdf2_sha256$1500000$...</code></li>
+        <li>不存明文，也不可逆</li>
+        <li>若直接给 password 赋值会存明文，是常见错误</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="num">04</div>
+  <div class="kicker">任务 2 · 路由</div>
+  <h2>两条路由，交给 auth_views</h2>
+  <div class="cols" style="margin-top:8px;">
+    <div>
+      <table>
+        <tr><th>URL</th><th>视图</th><th>名称</th></tr>
+        <tr><td><code>/login/</code></td><td><code>auth_views.login_view</code></td><td>login</td></tr>
+        <tr><td><code>/logout/</code></td><td><code>auth_views.logout_view</code></td><td>logout</td></tr>
+      </table>
+      <div class="kv" style="margin-top:16px;">
+        <p><b>为什么单独放 auth_views.py：</b></p>
+        <ul style="font-size:16px;">
+          <li>认证逻辑和业务视图分开，便于维护</li>
+          <li>路由用 <code>name</code>，模板里 <code>{% url %}</code> 反向解析</li>
+          <li>settings 里 <code>LOGIN_URL = "/login/"</code></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <pre>urlpatterns = [
+    path("", views.index, name="index"),
+    path("login/", auth_views.login_view, name="login"),
+    path("logout/", auth_views.logout_view, name="logout"),
+    ...
+]</pre>
+      <div class="kv" style="margin-top:14px;font-size:15px;">
+        未登录访问受保护页面时，Django 自动跳到
+        <code>/login/?next=/enterprise/list/</code>。
+      </div>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="num">05</div>
+  <div class="kicker">任务 2 · 视图</div>
+  <h2>登录视图：五个分支，一条主流程</h2>
+  <div class="cols" style="grid-template-columns:1.05fr .95fr;margin-top:4px;">
+    <pre>if request.user.is_authenticated:
+    return redirect("risk_app:index")
+
+if request.method == "POST":
+    username = request.POST.get("username", "").strip()
+    password = request.POST.get("password", "")
+    remember = request.POST.get("remember")
+
+    if not username or not password:
+        error = "用户名和密码不能为空"
+    else:
+        user = authenticate(request, username=username,
+                            password=password)
+        if user is not None:
+            login(request, user)
+            request.session.set_expiry(
+                604800 if remember else 0)
+            UserProfile.objects.get_or_create(
+                user=user, defaults={"role": "normal"})
+            return redirect(next_url or "risk_app:index")
+        error = "用户名或密码错误"</pre>
+    <div>
+      <ul style="font-size:16.5px;">
+        <li><b>已登录</b>：直接回首页，不重复登录</li>
+        <li><b>空参数</b>：单独提示“不能为空”</li>
+        <li><b>认证失败</b>：统一提示，不暴露账号是否存在</li>
+        <li><b>认证成功</b>：写会话 → 设有效期 → 补扩展 → 跳 next</li>
+        <li><b>next</b>：校验同源后再跳，防开放重定向</li>
+      </ul>
+      <div class="kv" style="margin-top:14px;font-size:14px;color:#666;">
+        退出：<code>logout(request)</code> 清会话，回登录页。
+      </div>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="num">06</div>
+  <div class="kicker">任务 2 · 模板</div>
+  <h2>登录页：表单要素一个不少</h2>
+  <div class="cols" style="grid-template-columns:.9fr 1.1fr;">
+    <figure><img src="assets/login_card.png" alt="登录页" style="max-height:450px;"><figcaption>图 1　登录页（卡片区域）</figcaption></figure>
+    <div>
+      <ul style="font-size:16.5px;">
+        <li><b>CSRF</b>：<code>{% csrf_token %}</code>，否则 POST 403</li>
+        <li><b>name 属性</b>：后端按 name 取值</li>
+        <li><b>密码掩码</b>：<code>type="password"</code></li>
+        <li><b>必填</b>：<code>required</code> 让浏览器先拦一层</li>
+        <li><b>记住我</b>：checkbox，name=remember</li>
+        <li><b>next 隐藏域</b>：登录后回原页面</li>
+        <li><b>错误提示</b>：<code>{% if error %}</code> 红色提示条</li>
+      </ul>
+      <div class="kv" style="margin-top:10px;font-size:14px;color:#666;">
+        页面独立布局：渐变背景、居中卡片，不显示侧栏。
+      </div>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="num">07</div>
+  <div class="kicker">任务 2 · 会话</div>
+  <h2>“记住我”到底改变了什么</h2>
+  <div class="grid2" style="margin-top:10px;align-items:start;">
+    <table>
+      <tr><th>选项</th><th>set_expiry</th><th>效果</th></tr>
+      <tr><td>勾选记住我</td><td>604800（7 天）</td><td>Cookie 有到期时间，7 天内免登录</td></tr>
+      <tr><td>不勾选</td><td>0</td><td>Cookie 无到期时间，关浏览器即失效</td></tr>
+    </table>
+    <div class="kv" style="font-size:15.5px;">
+      <p><b>实测：</b></p>
+      <ul style="font-size:15.5px;">
+        <li>勾选：<code>_session_expiry=604800</code>，Cookie 到期时间可见</li>
+        <li>不勾选：<code>_session_expiry=0</code>，Cookie 无 expires</li>
+      </ul>
+      <p style="margin-top:12px;"><b>一个容易看错的地方：</b><br>
+      不勾选时 <code>get_expiry_age()</code> 仍返回默认的 1209600，那是 Cookie 默认时长，
+      不代表会话没设置；要看 <code>_session_expiry</code> 和 Cookie 的 expires。</p>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="num">08</div>
+  <div class="kicker">任务 3 · 装饰器</div>
+  <h2>@login_required：页面级权限的最小闭环</h2>
+  <div class="cols" style="grid-template-columns:1.1fr .9fr;">
+    <figure><img src="assets/flow.png" alt="认证流程" style="max-height:360px;"><figcaption>图 2　登录与会话恢复流程</figcaption></figure>
+    <div>
+      <pre style="font-size:12px;">from django.contrib.auth.decorators import login_required
+
+@login_required
+def index(request):
+    ...
+
+@login_required
+def enterprise_list(request):
+    ...</pre>
+      <ul style="font-size:15.5px;margin-top:12px;">
+        <li>未登录 → 302 到 <code>LOGIN_URL</code>，并带 <code>next</code></li>
+        <li>登录成功 → 跳回 <code>next</code> 原页面</li>
+        <li>首页、企业/风险列表、可视化页都已加</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="num">09</div>
+  <div class="kicker">任务 3 · 验证</div>
+  <h2>跳转、回跳、拦截都跑通了</h2>
+  <div class="grid2" style="margin-top:8px;align-items:start;">
+    <div>
+      <pre style="font-size:13px;">$ curl -I /enterprise/list/
+HTTP/1.1 302 Found
+Location: /login/?next=/enterprise/list/
+
+$ curl -I /
+HTTP/1.1 302 Found
+Location: /login/?next=/
+
+$ curl -X POST /login/  （不带 CSRF Token）
+HTTP 403</pre>
+      <div class="cap" style="text-align:left;margin-top:8px;">图 3　未登录 302 与无 Token 的 403（实际 curl 输出）</div>
+    </div>
+    <div>
+      <table>
+        <tr><th>username</th><th>password 前缀</th><th>superuser</th></tr>
+        <tr><td>admin</td><td><code>pbkdf2_sha256$1500000$…</code></td><td>1</td></tr>
+        <tr><td>zhangsan</td><td><code>pbkdf2_sha256$1500000$…</code></td><td>0</td></tr>
+      </table>
+      <div class="cap" style="text-align:left;margin-top:8px;">图 4　auth_user 中密码均为哈希（实际查询结果）</div>
+    </div>
+  </div>
+  <div class="kv" style="margin-top:16px;font-size:15px;">
+    <b>实测：</b>未登录访问 <code>/enterprise/list/</code> → <code>302 /login/?next=/enterprise/list/</code>；
+    登录后回跳该页；两个错误账号的提示完全一致；普通用户（zhangsan）看不到“后台管理”，管理员（admin）能看到。
+  </div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="num">10</div>
+  <div class="kicker">小结</div>
+  <h2>今天完成的三件事</h2>
+  <div class="grid3" style="margin-top:14px;">
+    <div class="card"><div class="t">账号</div><div class="h">2 个</div><div class="d">admin 管理员、zhangsan 普通用户，PBKDF2 哈希</div></div>
+    <div class="card"><div class="t">登录页</div><div class="h">1 套</div><div class="d">视图 5 分支、模板 7 要素、2 条路由</div></div>
+    <div class="card"><div class="t">装饰器</div><div class="h">4+ 页面</div><div class="d">@login_required + LOGIN_URL + next 回跳</div></div>
+  </div>
+  <div style="margin-top:30px;font-size:17px;line-height:1.9;color:#333;">
+    还没做：注册、修改密码、失败次数锁定（指导书选做）；<br>
+    下一课：企业列表与详情页，把权限细化到按钮级。
+  </div>
+  <div style="margin-top:34px;font-size:20px;color:#1F3A5F;">请老师批评指正　—　谢谢</div>
+  <div class="foot">登录页面与权限雏形</div>
+</section>
+
+</body>
+</html>

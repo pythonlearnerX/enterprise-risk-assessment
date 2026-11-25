@@ -1,0 +1,20 @@
+# 统一换行，避免 Windows/Linux 互相污染
+* text=auto eol=lf
+
+# 二进制
+*.docx binary
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.zip  binary
+*.pptx binary
+
+# 脚本保持 CRLF（Windows 双击可运行）
+*.bat  text eol=crlf
+*.ps1  text eol=crlf
+
+# 语言统计时排除
+dataset/*.csv linguist-vendored
+risk_app/static/vendor/* linguist-vendored
+risk_app/static/js/echarts.min.js linguist-vendored

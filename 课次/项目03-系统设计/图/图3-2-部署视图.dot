@@ -1,0 +1,19 @@
+digraph DEP {
+  graph [rankdir=LR, fontname="Microsoft YaHei", fontsize=11, nodesep=0.45, ranksep=0.8, pad=0.2];
+  node [shape=box, style="rounded,filled", fontname="Microsoft YaHei", fontsize=10,
+        fillcolor="#EAF1FB", color="#3B6EA5", penwidth=1.0, margin="0.2,0.1"];
+  edge [color="#6B7280", arrowsize=0.7, fontname="Microsoft YaHei", fontsize=9];
+
+  browser [label="浏览器\nChrome / Edge", fillcolor="#F3F4F6", color="#6B7280"];
+  dj [label="Django 应用 risk_project\n开发服务器 :8000"];
+  my [label="MySQL 8.4\n:3307  risk_assessment", fillcolor="#DCFCE7", color="#15803D"];
+  old [label="MySQL 5.7\n:3306 旧库（只读保留）", fillcolor="#F3F4F6", color="#9CA3AF"];
+  ai [label="大模型平台\nHTTPS /v1/chat/completions"];
+  nlp [label="Docker 容器 nlp-risk\nFlask :5000", fillcolor="#FEF3C7", color="#D97706"];
+
+  browser -> dj [label=" HTTP :8000"];
+  dj -> my [label=" PyMySQL :3307"];
+  dj -> old [label=" 仅迁移期", style=dashed];
+  dj -> ai [label=" HTTPS"];
+  dj -> nlp [label=" HTTP :5000"];
+}

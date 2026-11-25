@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}企业详情 · 企业风险评估系统{% endblock %}
+{% block content %}
+<h2 class="page-title">企业详情</h2>
+  <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_report_pdf' enterprise.id %}"
+     target="_blank">导出 PDF 报告</a>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-7">
+    <div class="bg-white border p-3 h-100">
+      <h5 class="mb-3">{{ enterprise.firm_name }}</h5>
+      <table class="table table-sm mb-0">
+        <tr><th class="text-muted fw-normal" style="width:150px;">统一社会信用代码</th><td>{{ enterprise.usc_code|default:"-" }}</td></tr>
+        <tr><th class="text-muted fw-normal">法定代表人</th><td>{{ enterprise.legal_rep|default:"-" }}</td></tr>
+        <tr><th class="text-muted fw-normal">企业类别</th><td>{% if enterprise.firm_category == 'E' %}企业{% elif enterprise.firm_category == 'P' %}个体户{% else %}{{ enterprise.firm_category|default:"-" }}{% endif %}</td></tr>
+        <tr><th class="text-muted fw-normal">经营状态</th><td>
+          {% if enterprise.ope_status == '1' %}<span class="badge bg-success">在营</span>
+          {% elif enterprise.ope_status == '2' %}<span class="badge bg-secondary">注销</span>
+          {% elif enterprise.ope_status == '3' %}<span class="badge bg-warning text-dark">吊销</span>
+          {% else %}{{ enterprise.ope_status|default:"-" }}{% endif %}
+        </td></tr>
+        <tr><th class="text-muted fw-normal">注册资本</th><td>{{ enterprise.reg_cap|floatformat:2|default:"-" }} 万元</td></tr>
+        <tr><th class="text-muted fw-normal">成立日期</th><td>{{ enterprise.est_date|date:"Y-m-d"|default:"-" }}</td></tr>
+        <tr><th class="text-muted fw-normal">所属地区</th><td>{{ enterprise.province|default:"" }}{{ enterprise.city|default:"" }}{{ enterprise.district|default:"" }}</td></tr>
+        <tr><th class="text-muted fw-normal">注册地址</th><td>{{ enterprise.reg_address|default:"-" }}</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="bg-white border p-3 h-100">
+      <h6 class="text-muted">最新风险</h6>
+      {% if latest_risk %}
+        <div class="display-6 kpi-num" style="font-size:38px;">{{ latest_risk.total_risk_score|floatformat:1 }}</div>
+        <p class="mb-1">等级：{{ latest_risk.get_risk_level_display }}</p>
+        <p class="small text-muted mb-0">记录时间：{{ latest_risk.create_time|date:"Y-m-d H:i" }}</p>
+      {% else %}
+        <p class="text-muted mb-0">该企业暂无风险记录</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<h6 class="text-muted">关联风险记录（{{ risks|length }} 条）</h6>
+<div class="table-responsive bg-white">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead><tr><th>名称</th><th>综合得分</th><th>风险等级</th><th>操作</th></tr></thead>
+    <tbody>
+      {% for r in risks %}
+        <tr>
+          <td>{{ r.name }}</td>
+          <td>{{ r.total_risk_score|floatformat:2 }}</td>
+          <td>{{ r.get_risk_level_display }}</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:risk_detail' r.id %}">查看</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-center text-muted py-4">暂无关联记录</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

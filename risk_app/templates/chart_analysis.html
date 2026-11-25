@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}分析看板 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">分析看板</h2>
+    <div class="page-sub">8 个视角，每个都回答一个具体问题：分布是否偏、风险是否集中、规模有没有用、四维是否独立、谁异常。</div>
+  </div>
+  <span class="chip">样本 {{ data.n }} 条</span>
+  
+</div>
+
+<div class="glass p-3 mb-3" id="box-insights">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.12em;">关键结论（自动计算）</h6>
+    <span class="page-sub">数字随数据实时变化</span>
+  </div>
+  <ol class="mb-0" style="padding-left:1.2rem;line-height:1.95;">
+    {% for line in data.insights %}<li>{{ line|cut:"① "|cut:"② "|cut:"③ "|cut:"④ "|cut:"⑤ "|cut:"⑥ "|cut:"⑦ " }}</li>{% endfor %}
+  </ol>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card"><div class="label">高风险企业</div>
+      <div class="num">{{ data.counts.high }}</div>
+      <div class="page-sub mt-1">样本 {{ data.n }} 条</div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card"><div class="label">风险分基尼</div>
+      <div class="num">{{ data.gini }}</div>
+      <div class="page-sub mt-1">前 10% 贡献 {{ data.lorentz.top10 }}%</div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card"><div class="label">状态–等级 χ²</div>
+      <div class="num">{{ data.residual.chi2 }}</div>
+      <div class="page-sub mt-1">df={{ data.residual.dof }}，p={{ data.chi2_p }}</div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card"><div class="label">同规模异常</div>
+      <div class="num">{{ data.outliers|length }}</div>
+      <div class="page-sub mt-1">z≥2 的企业数</div></div>
+  </div>
+</div>
+
+<!-- ============ 一、分布与集中度 ============ -->
+<h6 class="mt-4 mb-2" style="color:#67e8f9;letter-spacing:.16em;">一、分布与集中度</h6>
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-hist">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">得分分布 + 阈值带</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="hist" data-ai-title="得分分布 + 阈值带">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：柱子是各分档家数，折线是累计占比；60 / 80 是低/中/高风险分界。</div>
+      <div id="chart-hist" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-lorentz">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">风险分集中度（洛伦兹曲线）</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="lorentz" data-ai-title="风险分集中度">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：蓝线越贴近对角线，风险分越平均；越向右下弯，越集中在少数企业。</div>
+      <div id="chart-lorentz" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3" id="box-bands">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">同规模正常区间（P25–P90 分位带）</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="band" data-ai-title="同规模正常区间">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：箱体 P25–P75，中线中位数，上须 P90。判断某企业高低，和同规模比才公平。</div>
+      <div id="chart-bands" class="chart-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 二、结构与相关 ============ -->
+<h6 class="mt-4 mb-2" style="color:#67e8f9;letter-spacing:.16em;">二、结构与相关</h6>
+
+<div class="glass p-3 mb-3" id="box-redundancy">
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">四维冗余度检验（α / PC1 / 排序一致性）</h6>
+    <span class="chip">回答一个问题：四维能不能合成一个</span>
+  </div>
+  <div class="page-sub mb-2">
+    读法：α&gt;0.9 且 PC1&gt;85% 说明四维在测同一个构念；若 PC1 权重接近 25%×4，
+    则等权就是数据支持的最优权重，不需要另定。
+  </div>
+  <div class="row g-2">
+    <div class="col-lg-3 col-md-6">
+      <div class="glass p-3 h-100">
+        <div class="page-sub">内部一致性（标准化 Cronbach α）</div>
+        <div style="font-size:26px;color:#e2f7ff;font-weight:600;">{{ data.redundancy.alpha }}</div>
+        <div class="page-sub">平均两两 r = {{ data.redundancy.r_bar }}；&gt;0.9 即「极高一致」</div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="glass p-3 h-100">
+        <div class="page-sub">第一主成分解释方差（PC1）</div>
+        <div style="font-size:26px;color:#e2f7ff;font-weight:600;">{{ data.redundancy.pc1_ratio }}%</div>
+        <div class="page-sub">PC1 权重：{% for k, v in data.redundancy.pc1_weight.items %}{{ k }} {{ v }}% {% endfor %}</div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="glass p-3 h-100">
+        <div class="page-sub">等权 vs PC1 加权</div>
+        <div style="font-size:26px;color:#e2f7ff;font-weight:600;">ρ {{ data.redundancy.pc1_spearman }}</div>
+        <div class="page-sub">等级改判 {{ data.redundancy.pc1_level_change }}% —— 两种权重等价</div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="glass p-3 h-100">
+        <div class="page-sub">单维替代的代价</div>
+        <div style="font-size:26px;color:#ffb4b4;font-weight:600;">{{ data.redundancy.level_change.合规 }}%</div>
+        <div class="page-sub">Top10% 名单只重合 {{ data.redundancy.top10_overlap.合规 }}%；等级改判 11%–14%</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-sub mt-2" style="color:#a5f3fc;">
+    结论：四维高度冗余，但合并有益——等权恰好等于主成分权重（25.0/25.1/25.0/24.9），
+    单维替代会换掉约 4 成头部名单、改变约 1/8 企业等级，所以保留四维合并，不再讨论「重新定权」。
+  </div>
+</div>
+
+<h6 class="mt-4 mb-2" style="color:#67e8f9;letter-spacing:.16em;">二、结构与相关</h6>
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-corr">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">四维相关矩阵</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="corr" data-ai-title="四维相关矩阵">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：颜色越暖两维越同向；r&gt;0.8 说明两维在说同一件事，加权时信息重复。</div>
+      <div id="chart-corr" class="chart-box" style="height:380px;"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-resid">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">状态 × 等级 标准化残差</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="resid" data-ai-title="状态 × 等级 标准化残差">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：格内为“实际−期望”标准化残差，|残差|&gt;2 才算异常；整体 χ²={{ data.residual.chi2 }}，p={{ data.chi2_p }}。</div>
+      <div id="chart-resid" class="chart-box" style="height:380px;"></div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3" id="box-radar">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">分组四维画像（全库 / 高风险 / 低风险）</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="radar" data-ai-title="分组四维画像">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：三条线形状越像，四维对“是否高风险”的区分度越低；形状差异才是有效信息。</div>
+      <div id="chart-radar" class="chart-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 三、关系与异常 ============ -->
+<h6 class="mt-4 mb-2" style="color:#67e8f9;letter-spacing:.16em;">三、关系与异常</h6>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="glass p-3" id="box-scatter">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">资本 × 得分 象限（小资本高风险为重点）</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="quadrant" data-ai-title="资本 × 得分 象限">AI 解读</button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：横轴对数资本，虚线为资本中位数与 80 分；左上象限＝小资本高风险，最该人工核查。</div>
+      <div id="chart-scatter" class="chart-box" style="height:400px;"></div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass p-3">
+      <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">同规模异常企业（z≥2）</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_analysis"
+                data-ai-target="outlier" data-ai-title="同规模异常企业">AI 解读</button>
+      </div>
+      <div class="page-sub mb-2">残差法：与同资本档企业比较，而非全库比较。</div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>企业</th><th>资本档</th><th>得分</th><th>z</th></tr></thead>
+          <tbody>
+            {% for o in data.outliers %}
+              <tr><td>{{ o.name|truncatechars:14 }}</td><td>{{ o.bucket }}</td>
+                  <td class="mono">{{ o.score|floatformat:1 }}</td>
+                  <td class="mono" style="color:#fca5a5;">{{ o.z }}</td></tr>
+            {% empty %}<tr><td colspan="4" class="muted">无</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3" id="box-cohort">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">成立年段 Cohort：均分与高风险占比</h6>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1">读法：柱是各年段高风险占比，线是均分；若柱从老到新单调上升，才说明“新企业更危险”。</div>
+      <div id="chart-cohort" class="chart-box"></div>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-3 mt-3">
+  <h6 style="color:#a5f3fc;letter-spacing:.1em;">方法与局限</h6>
+  <ul class="page-sub mb-0" style="line-height:1.9;">
+    <li><b>基尼系数</b>：得分升序累加，1−2×曲线下面积；0 完全平均，1 完全集中。</li>
+    <li><b>分位带</b>：用 P25/P50/P75/P90，不受极端值影响，比均值稳健。</li>
+    <li><b>相关系数</b>：Pearson r；本数据为合成分布，r 偏高属数据特性。</li>
+    <li><b>卡方残差</b>：(观察−期望)/√期望，|残差|&gt;2 才认为该格显著偏离。</li>
+    <li><b>局限</b>：描述性统计，不做因果推断；“高风险占比低”不等于“风险小”，还要看分母与阈值口径。</li>
+  </ul>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ data|json_script:"analysis-data" }}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("analysis-data").textContent);
+  const C = CHART_COLORS;
+
+  // 1 直方图 + 累计
+  const c1 = makeChart(document.getElementById("chart-hist"), {
+    tooltip: {trigger: "axis"},
+    grid: {left: 48, right: 48, top: 30, bottom: 34},
+    xAxis: Object.assign({type: "category", data: D.hist.labels}, axisStyle()),
+    yAxis: [
+      Object.assign({type: "value", name: "家数"}, axisStyle()),
+      Object.assign({type: "value", name: "累计%", max: 100, splitLine: {show: false}}, axisStyle())
+    ],
+    series: [
+      {name: "家数", type: "bar", data: D.hist.values, barWidth: "52%",
+       itemStyle: {borderRadius: [4, 4, 0, 0],
+         color: p => p.dataIndex >= 3 ? "#fca5a5" : C[p.dataIndex % C.length]},
+       label: {show: true, position: "top", color: "#cbd5e1", fontSize: 10}},
+      {name: "累计占比", type: "line", yAxisIndex: 1, data: D.hist.cum,
+       smooth: true, symbolSize: 6, lineStyle: {width: 2, color: "#fde68a"},
+       itemStyle: {color: "#fde68a"}}
+    ]
+  });
+  bindExport(document.getElementById("box-hist"), c1, "得分分布");
+
+  // 2 洛伦兹
+  const c2 = makeChart(document.getElementById("chart-lorentz"), {
+    tooltip: {trigger: "axis"},
+    grid: {left: 52, right: 24, top: 30, bottom: 40},
+    xAxis: Object.assign({type: "value", name: "企业累计%", min: 0, max: 100,
+                          nameLocation: "middle", nameGap: 24}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "风险分累计%", min: 0, max: 100}, axisStyle()),
+    series: [
+      {name: "绝对平均", type: "line", data: [[0, 0], [100, 100]], symbol: "none",
+       lineStyle: {type: "dashed", color: "rgba(148,163,184,.55)"}},
+      {name: "实际分布", type: "line", data: D.lorentz.points, smooth: true, symbol: "none",
+       lineStyle: {width: 2.5, color: "#22d3ee"},
+       areaStyle: {color: "rgba(34,211,238,.12)"}}
+    ]
+  });
+  bindExport(document.getElementById("box-lorentz"), c2, "洛伦兹曲线");
+
+  // 3 分位带
+  const c3 = makeChart(document.getElementById("chart-bands"), {
+    tooltip: {trigger: "item", formatter: p => {
+      const b = D.bands[p.dataIndex];
+      return b.bucket + "<br/>n=" + b.n + "<br/>P25 " + b.p25 + " / 中位 " + b.p50 +
+             "<br/>P75 " + b.p75 + " / P90 " + b.p90;
+    }},
+    grid: {left: 50, right: 90, top: 24, bottom: 34},
+    xAxis: Object.assign({type: "category", data: D.bands.map(b => b.bucket)}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "得分", min: 0, max: 100}, axisStyle()),
+    series: [{
+      type: "boxplot",
+      data: D.bands.map(b => [b.p25, b.p25, b.p50, b.p75, b.p90]),
+      itemStyle: {color: "rgba(34,211,238,.25)", borderColor: "#22d3ee", borderWidth: 1.5},
+      boxWidth: [16, 42]
+    }]
+  });
+  bindExport(document.getElementById("box-bands"), c3, "分位带");
+
+  // 4 相关热力图
+  const dims = D.corr.dims;
+  const c4 = makeChart(document.getElementById("chart-corr"), {
+    tooltip: {formatter: p => dims[p.data[0]] + " × " + dims[p.data[1]] +
+             "<br/>r = " + p.data[2] + "（n=" + D.n + "）"},
+    grid: {left: 70, right: 30, top: 20, bottom: 60},
+    xAxis: Object.assign({type: "category", data: dims, splitArea: {show: true}}, axisStyle()),
+    yAxis: Object.assign({type: "category", data: dims, splitArea: {show: true}}, axisStyle()),
+    visualMap: {min: 0.9, max: 1, dimension: 2, calculable: false, orient: "horizontal",
+      left: "center", bottom: 4, textStyle: {color: "#cbd5e1", fontSize: 10},
+      inRange: {color: ["#22d3ee", "#a5f3fc", "#fde68a", "#fb923c"]}},
+    series: [{type: "heatmap", data: D.corr.r,
+              itemStyle: {borderColor: "#0b1220", borderWidth: 2},
+              label: {show: true, color: "#0b1220", fontSize: 12, fontWeight: 600}}]
+  });
+  bindExport(document.getElementById("box-corr"), c4, "四维相关矩阵");
+
+  // 5 残差热力图
+  const c5 = makeChart(document.getElementById("chart-resid"), {
+    tooltip: {formatter: p => {
+      const c = D.residual.cells[p.data[2]];
+      return c ? D.residual.status[c.y] + " × " + D.residual.levels[c.x] +
+             "<br/>实际 " + c.obs + " / 期望 " + c.exp + "<br/>残差 " + c.resid : "";
+    }},
+    grid: {left: 76, right: 30, top: 20, bottom: 46},
+    xAxis: Object.assign({type: "category", data: D.residual.levels}, axisStyle()),
+    yAxis: Object.assign({type: "category", data: D.residual.status}, axisStyle()),
+    visualMap: {min: -1.5, max: 1.5, calculable: false, orient: "horizontal",
+      left: "center", bottom: 2, textStyle: {color: "#cbd5e1", fontSize: 10},
+      inRange: {color: ["#2563eb", "#7dd3fc", "#cbd5e1", "#fca5a5", "#dc2626"]}},
+    series: [{
+      type: "heatmap",
+      data: D.residual.cells.map(c => [c.x, c.y, c.resid]),
+      itemStyle: {borderColor: "#0b1220", borderWidth: 2},
+      label: {show: true, color: "#0b1220", fontSize: 11, fontWeight: 600,
+        formatter: p => {
+          const c = D.residual.cells.find(x => x.x === p.value[0] && x.y === p.value[1]);
+          return c ? c.obs + " (" + (c.resid > 0 ? "+" : "") + c.resid + ")" : "";
+        }}
+    }]
+  });
+  bindExport(document.getElementById("box-resid"), c5, "状态等级残差");
+
+  // 6 雷达
+  const c6 = makeChart(document.getElementById("chart-radar"), {
+    tooltip: {trigger: "item"},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    radar: {
+      indicator: dims.map(n => ({name: n, max: 100})),
+      radius: "60%", center: ["50%", "46%"],
+      axisName: {color: "#93a8c4"},
+      splitLine: {lineStyle: {color: CHART_GRID}},
+      splitArea: {areaStyle: {color: ["rgba(34,211,238,.03)", "transparent"]}},
+      axisLine: {lineStyle: {color: CHART_GRID}}
+    },
+    series: [{type: "radar", symbolSize: 4, data: D.radar}]
+  });
+  bindExport(document.getElementById("box-radar"), c6, "分组四维画像");
+
+  // 7 散点象限
+  const pts = [];
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  ["high", "medium", "low"].forEach(k => {
+    (D.scatter.points[k] || []).forEach(p => {
+      // 资本是离散档位，做 ±3% 的对数抖动，避免叠成竖条（只影响显示）
+      pts.push({v: [p[0] * Math.pow(1.03, rnd() - 0.5), p[1]], lvl: k});
+    });
+  });
+  const c7 = makeChart(document.getElementById("chart-scatter"), {
+    tooltip: {formatter: p => "资本 " + p.data[0] + " 万<br/>得分 " + p.data[1].toFixed(1)},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    grid: {left: 60, right: 24, top: 26, bottom: 56},
+    xAxis: Object.assign({type: "log", name: "注册资本(万)", min: 1}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "得分", min: 0, max: 100}, axisStyle()),
+    series: [
+      {name: "低", type: "scatter", data: pts.filter(p => p.lvl === "low").map(p => p.v),
+       symbolSize: 4, itemStyle: {color: "rgba(34,211,238,.55)"}},
+      {name: "中", type: "scatter", data: pts.filter(p => p.lvl === "medium").map(p => p.v),
+       symbolSize: 4, itemStyle: {color: "rgba(94,234,212,.75)"}},
+      {name: "高", type: "scatter", data: pts.filter(p => p.lvl === "high").map(p => p.v),
+       symbolSize: 7, itemStyle: {color: "#f87171"},
+       markLine: {
+         silent: true, symbol: "none",
+         lineStyle: {type: "dashed", color: "rgba(148,163,184,.7)"},
+         data: [{yAxis: 80, label: {formatter: "80 分", color: "#94a3b8"}},
+                {xAxis: D.scatter.cap_median, label: {formatter: "资本中位数", color: "#94a3b8"}}]
+       }}
+    ]
+  });
+  bindExport(document.getElementById("box-scatter"), c7, "资本得分象限");
+
+  // 8 Cohort
+  const c8 = makeChart(document.getElementById("chart-cohort"), {
+    tooltip: {trigger: "axis"},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    grid: {left: 52, right: 56, top: 26, bottom: 56},
+    xAxis: Object.assign({type: "category", data: D.cohort.map(c => c.cohort)}, axisStyle()),
+    yAxis: [
+      Object.assign({type: "value", name: "高风险占比%"}, axisStyle()),
+      Object.assign({type: "value", name: "均分", min: 0, max: 100, splitLine: {show: false}}, axisStyle())
+    ],
+    series: [
+      {name: "高风险占比", type: "bar", data: D.cohort.map(c => c.high_rate),
+       barWidth: "46%", itemStyle: {borderRadius: [4, 4, 0, 0], color: "#fca5a5"}},
+      {name: "均分", type: "line", yAxisIndex: 1, data: D.cohort.map(c => c.mean),
+       smooth: true, symbolSize: 7, lineStyle: {width: 2.5, color: "#22d3ee"},
+       itemStyle: {color: "#22d3ee"}}
+    ]
+  });
+  bindExport(document.getElementById("box-cohort"), c8, "成立年段");
+})();
+</script>
+{% endblock %}

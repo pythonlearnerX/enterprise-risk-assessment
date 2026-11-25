@@ -1,0 +1,20 @@
+digraph IA {
+  graph [rankdir=LR, fontname="Microsoft YaHei", fontsize=11, nodesep=0.35, ranksep=0.7, pad=0.2];
+  node [shape=box, style="rounded,filled", fontname="Microsoft YaHei", fontsize=10,
+        fillcolor="#EAF1FB", color="#3B6EA5", penwidth=1.1, margin="0.16,0.08"];
+  edge [color="#6B7280", arrowsize=0.65, fontname="Microsoft YaHei", fontsize=8];
+
+  登录 -> 首页 [label="成功"];
+  首页 -> 企业列表 [label="默认"];
+  首页 -> 风险指标;
+  首页 -> 数据可视化;
+  首页 -> AI分析;
+  首页 -> 用户管理 [label="仅管理员", style=dashed];
+  企业列表 -> 企业详情 [label="点击行"];
+  企业详情 -> 风险详情 [label="风险指标"];
+  风险详情 -> 风险报告 [label="生成报告"];
+  风险报告 -> PDF下载 [label="下载", style=dashed];
+  用户管理 [fillcolor="#FEF3C7", color="#D97706"];
+  PDF下载 [fillcolor="#DCFCE7", color="#15803D"];
+  登录 [fillcolor="#F3F4F6", color="#6B7280"];
+}

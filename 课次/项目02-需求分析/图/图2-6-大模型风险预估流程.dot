@@ -1,0 +1,16 @@
+digraph G {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.55, ranksep=0.32, pad=0.15];
+  node [fontname="Microsoft YaHei", fontsize=10, penwidth=1.0, shape=box, style="rounded,filled", fillcolor="#EAF1FB"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#555555", arrowsize=0.7];
+  start [shape=ellipse, style=filled, fillcolor="#E8F5E9", label="开始"];
+  end [shape=ellipse, style=filled, fillcolor="#FDE7E7", label="结束"];
+
+  start -> inp; inp [label="输入企业名称、行业、规模、描述"];
+  inp -> chk [label=" "]; chk [label="必填与长度校验", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  chk -> bad [label=" 不通过"]; bad [label="提示缺失项"]; bad -> inp;
+  chk -> call [label=" 通过"]; call [label="调用大模型接口"];
+  call -> resp [label=" "]; resp [label="响应超时或失败?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  resp -> deg [label=" 是"]; deg [label="降级为本地模拟结果并提示"]; deg -> show;
+  resp -> parse [label=" 否"]; parse [label="解析综合分、四维分析与建议"]; parse -> show;
+  show [label="页面展示结果"]; show -> end;
+}

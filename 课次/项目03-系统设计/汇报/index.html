@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>系统设计说明书 · 汇报</title>
+<style>
+  :root { --navy:#1F3A5F; --blue:#4E6E8E; --teal:#7FA6A0; --ochre:#C9A66B; --grey:#6B7280; --line:#D5DCE6; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background:#e9edf3; }
+  body { font-family: "Times New Roman", "SimSun", serif; color:#1a1a1a; }
+  .slide { position:relative; width:1280px; height:720px; margin:0 auto 28px; background:#fff;
+           padding:54px 64px 54px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.12); }
+  .num { position:absolute; top:22px; right:30px; font-size:14px; color:#9aa3af; letter-spacing:.08em; }
+  .foot { position:absolute; left:64px; bottom:20px; font-size:12px; color:#9aa3af; letter-spacing:.05em; }
+  .kicker { font-size:15px; color:var(--blue); letter-spacing:.18em; margin-bottom:8px; }
+  h1 { font-size:40px; line-height:1.25; margin:0 0 10px; color:var(--navy); font-weight:700; }
+  h2 { font-size:30px; margin:0 0 6px; color:var(--navy); }
+  .sub { font-size:17px; color:var(--grey); margin-bottom:22px; }
+  ul { margin:0; padding-left:22px; }
+  li { font-size:19px; line-height:1.65; margin-bottom:9px; }
+  li b { color:var(--navy); }
+  .cols { display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:center; height:520px; }
+  .cols.wide-left { grid-template-columns: 1.05fr .95fr; }
+  figure { margin:0; text-align:center; }
+  figure img { max-width:100%; max-height:470px; }
+  figcaption { font-size:13px; color:var(--grey); margin-top:8px; }
+  .cover { display:flex; flex-direction:column; justify-content:center; height:100%; }
+  .cover .band { display:inline-block; background:var(--navy); color:#fff; padding:8px 16px; font-size:15px; letter-spacing:.15em; margin-bottom:28px; }
+  .cover h1 { font-size:54px; margin-bottom:14px; }
+  .cover .en { font-size:16px; color:#98a2b3; letter-spacing:.06em; margin-bottom:44px; }
+  .cover .who { font-size:18px; line-height:1.9; color:#333; }
+  .cover .who span { color:var(--grey); }
+  .big { font-size:56px; color:var(--navy); line-height:1; }
+  .stats { display:grid; grid-template-columns: repeat(4,1fr); gap:18px; margin-top:26px; }
+  .stat { border:1px solid var(--line); padding:16px 18px; background:#f7f9fc; }
+  .stat .n { font-size:34px; color:var(--navy); line-height:1.1; }
+  .stat .t { font-size:14px; color:var(--grey); margin-top:6px; }
+  table { border-collapse:collapse; width:100%; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:7px 9px; text-align:left; }
+  th { background:var(--navy); color:#fff; font-weight:400; }
+  tr:nth-child(even) td { background:#f7f9fc; }
+  .tag { display:inline-block; font-size:12px; color:#fff; background:var(--ochre); padding:1px 7px; margin-left:6px; vertical-align:2px; }
+  .note { font-size:14px; color:var(--grey); margin-top:12px; line-height:1.6; }
+  .q { font-size:19px; line-height:1.9; }
+  .q span { color:var(--blue); }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:34px; }
+  @page { size: 13.333in 7.5in; margin: 0; }
+  @media print {
+    html, body { background:#fff; }
+    .slide { margin:0; box-shadow:none; page-break-after:always; break-after:page; }
+    .slide:last-child { page-break-after:auto; }
+  }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="num">01</div>
+  <div class="cover">
+    <div><span class="band">模型开发综合实训 · 项目 3</span></div>
+    <h1>企业风险评估系统<br>系统设计说明书</h1>
+    <div class="en">System Design Specification · V1.0</div>
+    <div class="who">
+      汇报人：薛瑞　<span>249990736</span><br>
+      班级：24 智科 4 班　<span>人工智能与计算机学院</span><br>
+      指导教师：王恒达　<span>2026 年 11 月</span>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">02</div>
+  <div class="kicker">汇报脉络</div>
+  <h2>从“需求”走到“能施工”</h2>
+  <div class="sub">设计文档不是把需求抄一遍，而是回答“怎么实现、为什么这样实现”。</div>
+  <div class="two" style="margin-top:18px;">
+    <ul>
+      <li><b>架构</b>：五层怎么分，为什么选 Django + MySQL 8.4</li>
+      <li><b>数据</b>：E-R 怎么画，四张表怎么落，63 列为什么只留 24 列</li>
+      <li><b>接口</b>：23 条路由、3 个数据接口、统一错误码</li>
+      <li><b>安全</b>：登录时序、权限矩阵、装饰器拦截</li>
+      <li><b>界面</b>：15 个页面、3 张低保真原型</li>
+      <li><b>评审</b>：7 条问题闭环、6 条设计决策留痕</li>
+    </ul>
+    <div>
+      <div class="stats" style="grid-template-columns:1fr 1fr;">
+        <div class="stat"><div class="n">19</div><div class="t">页说明书</div></div>
+        <div class="stat"><div class="n">20</div><div class="t">张表格</div></div>
+        <div class="stat"><div class="n">8</div><div class="t">张图</div></div>
+        <div class="stat"><div class="n">7</div><div class="t">条评审</div></div>
+      </div>
+      <div class="note">一句话结论：这份设计已经能直接指导项目 4 起的编码，字段、路由、权限都能对应到代码。</div>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">03</div>
+  <div class="kicker">01 架构</div>
+  <h2>五层架构：单向依赖，改一层不牵动全局</h2>
+  <div class="cols wide-left">
+    <figure><img src="assets/arch.png" alt="分层架构"><figcaption>图 1-1　系统总体架构图</figcaption></figure>
+    <ul>
+      <li><b>表现层</b>：模板 + Bootstrap + ECharts，只负责展示</li>
+      <li><b>控制层</b>：路由、参数校验、权限，视图不写 SQL</li>
+      <li><b>业务层</b>：评分、提示词、文本识别，纯函数可测试</li>
+      <li><b>数据层</b>：ORM + MySQL 8.4，字段带中文名</li>
+      <li><b>外部服务层</b>：大模型与 NLP 容器，失败可降级</li>
+    </ul>
+  </div>
+  <div class="note">选型理由：Django 自带认证/后台/ORM/模板，80 学时内能做完整闭环；MySQL 8.4 是 Django 6.1 的硬性要求。</div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">04</div>
+  <div class="kicker">02 部署</div>
+  <h2>部署视图：新旧库并存，迁移可回退</h2>
+  <div class="cols wide-left">
+    <figure><img src="assets/deploy.png" alt="部署视图"><figcaption>图 1-2　系统部署视图</figcaption></figure>
+    <ul>
+      <li>浏览器 → Django 开发服务器 <b>:8000</b></li>
+      <li>Django → MySQL 8.4 <b>:3307</b>（新库，utf8mb4）</li>
+      <li>旧库 MySQL 5.7 <b>:3306</b> 仅迁移期只读保留</li>
+      <li>大模型走 <b>HTTPS</b>，NLP 容器映射 <b>:5000</b></li>
+    </ul>
+  </div>
+  <div class="note">8.4 与 5.7 并存，验证通过再下线 5.7；这样迁移失败也能退回，不影响已有数据。</div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">05</div>
+  <div class="kicker">03 功能模块</div>
+  <h2>6 个模块、21 个子功能，3 个扩展有出处</h2>
+  <div class="cols wide-left">
+    <figure><img src="assets/func.png" alt="功能结构"><figcaption>图 1-3　系统功能结构图</figcaption></figure>
+    <div>
+      <ul>
+        <li>18 个基础功能对应 FR-01～FR-07</li>
+        <li><b>数据导出</b><span class="tag">扩展</span>：尽调要全字段导出</li>
+        <li><b>报告归档</b><span class="tag">扩展</span>：报告可回看、可复核</li>
+        <li><b>审计日志</b><span class="tag">扩展</span>：管理操作可追溯</li>
+      </ul>
+      <div class="note">扩展不是凑数，每条都对应需求评审里的一个缺口，并配了实现位置。</div>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">06</div>
+  <div class="kicker">04 数据库</div>
+  <h2>E-R 与四张表：字段有据，冗余有意</h2>
+  <div class="cols wide-left">
+    <figure><img src="assets/er.png" alt="E-R"><figcaption>图 2-1　数据库 E-R 图</figcaption></figure>
+    <div>
+      <ul>
+        <li>enterprise：<b>24</b> 个可用字段，63 列中 17 列实测全空</li>
+        <li>risk_indicator：12 项原始指标 + 四维/综合得分</li>
+        <li>user_profile：与 auth_user 一对一，存角色</li>
+        <li>audit_log：谁、何时、对谁、做了什么</li>
+      </ul>
+      <div class="note">裁剪理由：空列建了也查不到数据，反而拖慢查询；其余 39 列下沉 ODS，需要再补。</div>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">07</div>
+  <div class="kicker">05 接口</div>
+  <h2>23 条路由、6 个数据接口、一套错误码</h2>
+  <div style="display:grid; grid-template-columns:1.15fr .85fr; gap:34px; margin-top:14px;">
+    <div>
+      <table>
+        <tr><th>URL</th><th>视图</th><th>方法</th></tr>
+        <tr><td>/enterprise/list/</td><td>enterprise_list</td><td>GET</td></tr>
+        <tr><td>/risk/detail/&lt;pk&gt;/</td><td>risk_detail</td><td>GET</td></tr>
+        <tr><td>/report/&lt;pk&gt;/pdf/</td><td>report_pdf</td><td>GET</td></tr>
+        <tr><td>/predict/api/</td><td>predict_api</td><td>POST</td></tr>
+        <tr><td>/admin/audit/</td><td>admin_audit</td><td>GET</td></tr>
+      </table>
+      <div class="note">完整 23 条见说明书表 3-1；页面接口返回 HTML，数据接口以 /api/ 结尾返回 JSON。</div>
+    </div>
+    <div>
+      <ul style="font-size:17px;">
+        <li>统一返回 <b>{code, message, data}</b></li>
+        <li>code=0 成功、-1 业务失败、403 越权</li>
+        <li>大模型超时降级，返回 degraded=true</li>
+        <li>参数、权限、异常都在接口内处理</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">08</div>
+  <div class="kicker">06 认证与权限</div>
+  <h2>登录有时序，越权有 403，密码不落明文</h2>
+  <div class="cols wide-left">
+    <figure><img src="assets/login.png" alt="登录时序"><figcaption>图 3-1　登录认证时序图</figcaption></figure>
+    <ul style="font-size:17.5px;">
+      <li>PBKDF2 + 随机盐，库里无明文</li>
+      <li>认证失败统一提示，不区分账号/密码，防枚举</li>
+      <li>“记住我”7 天，否则关浏览器失效</li>
+      <li>权限 = 角色 + 装饰器 + 403 页面，只在服务端判断</li>
+      <li>菜单隐藏只是提示，不能当安全边界</li>
+    </ul>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">09</div>
+  <div class="kicker">07 页面</div>
+  <h2>15 个页面，统一的“顶部 + 左栏 + 内容区”</h2>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:18px;">
+    <figure><img src="assets/ui_list.png" style="max-height:330px;"><figcaption>企业列表：筛选常驻，6 列主表</figcaption></figure>
+    <figure><img src="assets/ui_risk.png" style="max-height:330px;"><figcaption>风险详情：结论置顶，四维卡片</figcaption></figure>
+    <figure><img src="assets/ui_report.png" style="max-height:330px;"><figcaption>风险报告：固定四段，可导 PDF</figcaption></figure>
+  </div>
+  <div class="note">列表 → 详情 → 风险详情 → 报告，任意节点不超过 3 次点击；空状态、加载、错误都有明确呈现。</div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">10</div>
+  <div class="kicker">08 评审与决策</div>
+  <h2>评审 7 条全闭环，关键取舍留了记录</h2>
+  <div class="two">
+    <ul style="font-size:17px;">
+      <li>企业表 63 → 24 列（空列下沉 ODS）</li>
+      <li>名称模糊查询未走索引 → 前缀索引/全文检索</li>
+      <li>越权只藏菜单 → 服务端装饰器 + 403</li>
+      <li>导出未脱敏 → 脱敏 + 二次确认 + 审计</li>
+      <li>PDF 阻塞请求 → 异步生成或缓存</li>
+    </ul>
+    <div>
+      <table>
+        <tr><th>EXPLAIN 实测</th><th>结果</th></tr>
+        <tr><td>usc_code 等值</td><td>ref，rows=1</td></tr>
+        <tr><td>ope_status 等值</td><td>ref，rows=4639</td></tr>
+        <tr><td>LIKE '重庆%'</td><td>ALL，rows=9279</td></tr>
+      </table>
+      <div class="note">索引不是建了就生效：匹配率过高时优化器会放弃，这是实测出来的结论。</div>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">11</div>
+  <div class="kicker">09 落地情况</div>
+  <h2>设计已经落到代码：工程、模型、数据都跑通了</h2>
+  <table style="margin-top:14px;">
+    <tr><th>设计内容</th><th>落地状态</th><th>证据</th></tr>
+    <tr><td>五层架构 / 目录</td><td>已建 risk_project + risk_app</td><td>manage.py check 0 issues</td></tr>
+    <tr><td>四张表结构</td><td>已迁移建表，库内 14 张表</td><td>0001_initial.py，DESC enterprise</td></tr>
+    <tr><td>数据导入</td><td>两张 CSV 各 10000 条，5.7 秒</td><td>data_import.py 输出</td></tr>
+    <tr><td>后台与权限</td><td>4 个模型注册，搜索/筛选可用</td><td>后台列表截图</td></tr>
+    <tr><td>页面原型</td><td>3 张已出，其余 12 页有布局说明</td><td>图 3-2～3-4</td></tr>
+  </table>
+  <div class="note">设计文档里的字段、路由、权限都能在代码里找到对应位置，不是“写完就放着”。</div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+<section class="slide">
+  <div class="num">12</div>
+  <div class="kicker">10 总结</div>
+  <h2>三个亮点、两个不足、下一步</h2>
+  <div class="two" style="margin-top:8px;">
+    <ul style="font-size:17.5px;">
+      <li><b>亮点一</b>：用实测数据做设计——17 个空列是查出来的，EXPLAIN 是跑出来的</li>
+      <li><b>亮点二</b>：扩展功能都有出处，不硬凑</li>
+      <li><b>亮点三</b>：设计能落地，工程/模型/导入都已验证</li>
+    </ul>
+    <div>
+      <ul style="font-size:17.5px;">
+        <li><b>不足</b>：报表只做了 PDF，异步导出还没实现</li>
+        <li><b>不足</b>：全文索引、缓存留到数据量上来再做</li>
+        <li><b>下一步</b>：登录与权限 → 列表详情页 → 评分与报告</li>
+      </ul>
+      <div class="q" style="margin-top:16px;">请老师批评指正 <span>— 谢谢</span></div>
+    </div>
+  </div>
+  <div class="foot">企业风险评估系统 · 系统设计说明书</div>
+</section>
+
+</body>
+</html>

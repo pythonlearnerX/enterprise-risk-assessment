@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}AI 平台配置 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">AI 平台配置</h2>
+    <div class="page-sub">用自己的 API Key 调用大模型；Key 只保存在当前账号下，展示时脱敏。</div>
+  </div>
+  <span class="chip">当前用户 · {{ user.username }}</span>
+</div>
+
+{% if saved %}<div class="alert alert-info py-2">已保存。可以点“测试连接”验证 Key 是否可用。</div>{% endif %}
+{% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="glass p-4">
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">平台</label>
+            <select name="provider" id="provider" class="form-select">
+              {% for value, label in providers %}
+                <option value="{{ value }}" {% if setting.provider == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">模型名称</label>
+            <input type="text" name="model_name" id="model_name" class="form-control"
+                   value="{{ setting.model_name }}" placeholder="deepseek-chat">
+          </div>
+          <div class="col-12">
+            <label class="form-label">接口地址（OpenAI 兼容）</label>
+            <input type="text" name="base_url" id="base_url" class="form-control"
+                   value="{{ setting.base_url }}" placeholder="https://api.deepseek.com/v1">
+            <div class="page-sub mt-1" style="font-size:11px;">
+              本机地址（127.0.0.1 / localhost）需要先启动对应服务；真实使用请填平台地址，
+              如 DeepSeek <code>https://api.deepseek.com/v1</code>、OpenAI <code>https://api.openai.com/v1</code>。
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">API Key</label>
+            <input type="password" name="api_key" id="api_key" class="form-control"
+                   placeholder="{% if setting.api_key %}已保存（{{ setting.api_key|slice:':6' }}…），留空表示不修改{% else %}sk-...{% endif %}">
+            <div class="page-sub mt-1">Key 会保存在本机数据库，仅用于代你发起请求；换账号互不可见。</div>
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="enabled" id="enabled"
+                     {% if setting.enabled %}checked{% endif %}>
+              <label class="form-check-label" for="enabled">启用该配置</label>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary">保存配置</button>
+          <button type="submit" name="action" value="clear_key" class="btn btn-outline-primary"
+                  onclick="return confirm('确定清除已保存的 API Key？');">清除 Key</button>
+          <button type="button" class="btn btn-ai" id="btn-test">测试连接</button>
+        </div>
+      </form>
+      <div id="test-result" class="page-sub mt-3"></div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="glass p-4">
+      <h6 style="color:#a5f3fc;letter-spacing:.12em;">说明</h6>
+      <ul class="page-sub" style="line-height:1.9;padding-left:18px;">
+        <li>DeepSeek：接口 <code>https://api.deepseek.com/v1</code>，模型 <code>deepseek-chat</code></li>
+        <li>OpenAI：接口 <code>https://api.openai.com/v1</code>，模型如 <code>gpt-4o-mini</code></li>
+        <li>其他平台只要兼容 <code>/chat/completions</code> 就能用</li>
+        <li>测试走 <code>GET /models</code>，只验证 Key，不消耗生成额度</li>
+        <li>“AI 解读”按钮在风险详情页，每次解读会记一条审计日志</li>
+      </ul>
+      <hr>
+      <p class="page-sub mb-0">
+        安全提醒：课程演示环境未做加密存储，请使用临时 Key，演示结束在平台后台删除。
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const DEFAULTS = {
+  deepseek: ["https://api.deepseek.com/v1", "deepseek-chat"],
+  openai: ["https://api.openai.com/v1", "gpt-4o-mini"],
+  custom: ["", ""]
+};
+const provider = document.getElementById("provider");
+provider.addEventListener("change", function () {
+  const d = DEFAULTS[this.value] || ["", ""];
+  document.getElementById("base_url").value = d[0];
+  document.getElementById("model_name").value = d[1];
+});
+
+document.getElementById("btn-test").addEventListener("click", async function () {
+  const box = document.getElementById("test-result");
+  box.textContent = "测试中…";
+  const payload = {
+    api_key: document.getElementById("api_key").value,
+    base_url: document.getElementById("base_url").value
+  };
+  try {
+    const resp = await fetch("{% url 'risk_app:ai_test' %}", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-CSRFToken": window.djangoCsrfToken || ""},
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    box.textContent = (data.ok ? "✅ " : "❌ ") + data.message;
+    box.style.color = data.ok ? "#6ee7b7" : "#fda4af";
+  } catch (e) {
+    box.textContent = "❌ 请求失败：" + e;
+    box.style.color = "#fda4af";
+  }
+});
+</script>
+{% endblock %}

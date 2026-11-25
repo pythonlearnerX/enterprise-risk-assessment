@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>登录 · 企业风险评估系统</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <style>
+    body {
+      background:
+        radial-gradient(900px 520px at 18% -8%, rgba(34, 211, 238, .22), transparent 60%),
+        radial-gradient(820px 520px at 92% 8%, rgba(96, 165, 250, .18), transparent 58%),
+        linear-gradient(180deg, #050a12, #07101d 60%, #050a12);
+      min-height: 100vh;
+    }
+    .login-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .login-card {
+      width: 400px;
+      border-radius: 16px;
+      padding: 34px 34px 26px;
+      background: rgba(13, 22, 37, .82);
+      border: 1px solid rgba(103, 232, 249, .28);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .55), 0 0 60px rgba(34, 211, 238, .12);
+      backdrop-filter: blur(18px);
+      position: relative;
+    }
+    .login-card::before {
+      content: "";
+      position: absolute; left: 24px; right: 24px; top: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+    }
+    .login-eyebrow { color: #5eead4; letter-spacing: .35em; font-size: 10.5px; text-align: center; }
+    .login-card h1.login-title, .login-title { color: #f0f9ff !important; font-size: 23px; text-align: center; margin: 8px 0 4px; letter-spacing: .06em; }
+    .login-sub { color: #7c93b3; font-size: 12px; text-align: center; margin-bottom: 26px; letter-spacing: .08em; }
+    .login-card .form-label { color: #9db3d0; }
+    .login-card .form-control { background: rgba(5, 11, 20, .8) !important; }
+    .login-meta { color: #6f86a6; font-size: 11.5px; text-align: center; margin-top: 18px; letter-spacing: .04em; }
+    .login-meta b { color: #a5f3fc; font-weight: 400; }
+    .brand-line { display: flex; justify-content: center; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+<div class="login-shell">
+  <div class="login-card">
+    <div class="brand-line">
+      <svg width="44" height="44" viewBox="0 0 32 32" fill="none">
+        <path d="M16 2 28 9v14L16 30 4 23V9z" stroke="#22d3ee" stroke-width="1.2"/>
+        <path d="M16 8.5 23 13v9l-7 4.5L9 22v-9z" fill="rgba(34,211,238,.16)" stroke="#5eead4" stroke-width=".9"/>
+        <circle cx="16" cy="17" r="2.4" fill="#5eead4"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow">ENTERPRISE RISK INTELLIGENCE</div>
+    <h1 class="login-title">企业风险评估系统</h1>
+    <p class="login-sub">安全登录 · 按角色进入工作台</p>
+
+    {% if error %}
+      <div class="alert alert-danger py-2 small mb-3">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'risk_app:login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="mb-3">
+        <label class="form-label" for="username">用户名</label>
+        <input type="text" class="form-control" id="username" name="username"
+               placeholder="请输入用户名" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="password">密码</label>
+        <input type="password" class="form-control" id="password" name="password"
+               placeholder="请输入密码" required>
+      </div>
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">
+        <label class="form-check-label small" for="remember" style="color:#8ea3bf;">记住我（7 天内免登录）</label>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 py-2">进入系统</button>
+    </form>
+
+    <p class="login-meta">
+      测试账号：<b>admin</b>（管理员）· <b>zhangsan</b>（普通用户）
+    </p>
+  </div>
+</div>
+</body>
+</html>

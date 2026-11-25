@@ -1,0 +1,40 @@
+digraph ARCH {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.5, ranksep=0.55, pad=0.2, compound=true];
+  node [shape=box, style="rounded,filled", fontname="Microsoft YaHei", fontsize=10,
+        fillcolor="#EAF1FB", color="#3B6EA5", penwidth=1.0, margin="0.18,0.09"];
+  edge [color="#6B7280", arrowsize=0.7, fontname="Microsoft YaHei", fontsize=9];
+
+  subgraph cluster_p { label="表现层  Presentation"; fontsize=10; color="#B9CBEA"; style="rounded";
+    tpl [label="Django 模板\nBootstrap 5"];
+    chart [label="ECharts 5\n图表渲染"];
+    form [label="表单 / AJAX"];
+  }
+  subgraph cluster_c { label="控制层  Controller"; fontsize=10; color="#B9CBEA"; style="rounded";
+    url [label="urls.py\n路由分发"];
+    view [label="views.py\n参数校验 / 权限"];
+    authv [label="auth_views.py\n登录 / 退出"];
+  }
+  subgraph cluster_b { label="业务层  Service"; fontsize=10; color="#B9CBEA"; style="rounded";
+    calc [label="risk_calc.py\n四维评分"];
+    llm [label="llm_predict.py\n提示词 / 解析"];
+    nlp [label="nlp_infer.py\n文本识别"];
+  }
+  subgraph cluster_d { label="数据层  Data"; fontsize=10; color="#B9CBEA"; style="rounded";
+    orm [label="Django ORM\n模型与查询集"];
+    db [label="MySQL 8.4\nrisk_assessment"];
+  }
+  subgraph cluster_e { label="外部服务层  External"; fontsize=10; color="#F3D9B1"; style="rounded";
+    llmapi [label="大模型平台\nHTTPS API"];
+    dock [label="Docker NLP\nFlask :5000"];
+  }
+
+  tpl -> view [label=" 请求"];
+  chart -> view [label=" 数据"];
+  form -> view;
+  url -> view -> orm [label=" 读写"];
+  view -> calc [label=" 调用"];
+  calc -> orm;
+  view -> llm -> llmapi;
+  view -> nlp -> dock;
+  orm -> db [label=" SQL"];
+}

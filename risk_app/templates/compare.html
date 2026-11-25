@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}企业对比 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">企业对比</h2>
+    <div class="page-sub">选 2–4 家企业，比较总分、四维与同规模均值；在企业列表勾选后点“对比选中”。</div>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-sm btn-outline-primary" id="btn-share">复制分享链接</button>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">去企业库选择</a>
+  </div>
+</div>
+
+{% if not rows %}
+  <div class="glass p-4">
+    <p class="mb-2">还没有选择企业。</p>
+    <p class="page-sub mb-0">打开“企业信息”，勾选 2–4 家，点“对比选中”即可。</p>
+  </div>
+{% else %}
+  <div class="row g-3 mb-3">
+    {% for x in rows %}
+      <div class="col-md-3">
+        <div class="stat-card h-100">
+          <div class="label">{{ x.ent.firm_name|truncatechars:18 }}</div>
+          <div class="num">{{ x.risk.total_risk_score|floatformat:2 }}</div>
+          <div class="page-sub mt-1">
+            全库百分位 {{ x.percentile }}% · 同规模均值 {{ x.peer_avg }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">四维雷达对比</h6>
+        <div id="chart-radar" class="chart-box"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">总分对比</h6>
+        <div id="chart-total" class="chart-box"></div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">指标对照</h6>
+        <div class="table-responsive mt-2">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr><th>企业</th><th>总分</th><th>财务</th><th>经营</th><th>合规</th><th>质量</th>
+                  <th>百分位</th><th>同规模均值</th><th>差值</th><th>注册资本</th><th>状态</th></tr>
+            </thead>
+            <tbody>
+              {% for x in rows %}
+                <tr>
+                  <td>{{ x.ent.firm_name }}</td>
+                  <td class="mono">{{ x.risk.total_risk_score|floatformat:2 }}</td>
+                  <td class="mono">{{ x.risk.financial_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.operation_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.compliance_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.quality_score|floatformat:0 }}</td>
+                  <td>{{ x.percentile }}%</td>
+                  <td class="mono">{{ x.peer_avg }}</td>
+                  <td class="mono">{{ x.diff }}</td>
+                  <td>{{ x.ent.reg_cap|floatformat:2 }}</td>
+                  <td>{{ x.status_label }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("btn-share") && document.getElementById("btn-share").addEventListener("click", function () {
+  const url = window.location.origin + window.location.pathname + window.location.search;
+  navigator.clipboard.writeText(url).then(() => {
+    this.textContent = "已复制";
+    setTimeout(() => this.textContent = "复制分享链接", 1500);
+  });
+});
+</script>
+{% if rows %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+const DATA = {{ chart_json|safe }};
+const radar = makeChart(document.getElementById("chart-radar"), {
+  tooltip: {trigger: "item"},
+  legend: Object.assign({bottom: 0, type: "scroll"}, CHART_BASE.legend),
+  radar: {
+    indicator: ["财务","经营","合规","质量"].map(n => ({name: n, max: 100})),
+    radius: "62%", center: ["50%", "46%"],
+    axisName: {color: "#93a8c4"},
+    splitLine: {lineStyle: {color: "rgba(103,232,249,.12)"}},
+    splitArea: {areaStyle: {color: ["rgba(34,211,238,.03)", "transparent"]}},
+    axisLine: {lineStyle: {color: "rgba(103,232,249,.12)"}}
+  },
+  series: [{type: "radar", symbolSize: 4,
+    data: DATA.map(x => ({name: x.name.length > 12 ? x.name.slice(0, 12) + "…" : x.name, value: x.values}))}]
+});
+
+const total = makeChart(document.getElementById("chart-total"), {
+  tooltip: {trigger: "axis"},
+  grid: {left: 50, right: 20, top: 30, bottom: 50},
+  xAxis: Object.assign({type: "category",
+    data: DATA.map(x => x.name.length > 8 ? x.name.slice(0, 8) + "…" : x.name),
+    axisLabel: {rotate: 20, color: "#93a8c4"}}, axisStyle()),
+  yAxis: Object.assign({type: "value", max: 100}, axisStyle()),
+  series: [{type: "bar", data: DATA.map(x => x.total), barWidth: "40%",
+    itemStyle: {borderRadius: [4,4,0,0],
+      color: new echarts.graphic.LinearGradient(0,0,0,1, [{offset:0,color:"#22d3ee"},{offset:1,color:"rgba(34,211,238,.15)"}])},
+    label: {show: true, position: "top", color: "#93a8c4"}}]
+});
+</script>
+{% endif %}
+{% endblock %}

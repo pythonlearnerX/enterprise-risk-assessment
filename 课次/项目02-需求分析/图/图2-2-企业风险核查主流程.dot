@@ -1,0 +1,21 @@
+digraph G {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.55, ranksep=0.32, pad=0.15];
+  node [fontname="Microsoft YaHei", fontsize=10, penwidth=1.0, shape=box, style="rounded,filled", fillcolor="#EAF1FB"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#555555", arrowsize=0.7];
+  start [shape=ellipse, style=filled, fillcolor="#E8F5E9", label="开始"];
+  end [shape=ellipse, style=filled, fillcolor="#FDE7E7", label="结束"];
+
+  start -> q [label=" 登录"];
+  q [label="登录并输入企业名称或信用代码"];
+  q -> m [label=" 提交查询"];
+  m [label="是否匹配到企业", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  m -> nf [label=" 否"]; nf [label="提示未找到并返回修改"]; nf -> q;
+  m -> list [label=" 是"]; list [label="查看企业列表与详情"];
+  list -> has [label=" 检查风险"]; has [label="是否有风险记录", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  has -> none [label=" 否"]; none [label="提示暂无风险数据"]; none -> end;
+  has -> score [label=" 是"]; score [label="展示 12 项指标与四维得分"];
+  score -> report [label=" 生成报告"]; report [label="生成风险报告页"];
+  report -> ai [label=" "]; ai [label="是否需要 AI 分析", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  ai -> call [label=" 是"]; call [label="调用大模型 / NLP"]; call -> out;
+  ai -> out [label=" 否"]; out [label="下载或打印报告"]; out -> end;
+}

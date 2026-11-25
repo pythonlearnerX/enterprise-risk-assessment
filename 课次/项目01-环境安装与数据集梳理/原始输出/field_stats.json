@@ -1,0 +1,426 @@
+{
+  "stats": {
+    "ent": [
+      {
+        "col": "firm_name",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 10000,
+        "top": [
+          [
+            "重庆大牛场餐饮管理有限公司翠苹路分公司",
+            1
+          ],
+          [
+            "重庆远大脉通静脉曲张疾病研究院",
+            1
+          ],
+          [
+            "重庆恩彼生物科技有限公司",
+            1
+          ]
+        ]
+      },
+      {
+        "col": "usc_code",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 10000,
+        "top": [
+          [
+            "91500112054286454G",
+            1
+          ],
+          [
+            "91500108MA5YW1N272",
+            1
+          ],
+          [
+            "91500107MAABUHFP55",
+            1
+          ]
+        ]
+      },
+      {
+        "col": "firm_category",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 1,
+        "top": [
+          [
+            "E",
+            10000
+          ]
+        ]
+      },
+      {
+        "col": "ope_status",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 3,
+        "top": [
+          [
+            "1",
+            6146
+          ],
+          [
+            "2",
+            2687
+          ],
+          [
+            "3",
+            1167
+          ]
+        ]
+      },
+      {
+        "col": "legal_rep",
+        "non_null": 9986,
+        "missing_pct": 0.14,
+        "unique": 9192,
+        "top": [
+          [
+            "尹朝洋",
+            11
+          ],
+          [
+            "王勇",
+            9
+          ],
+          [
+            "刘勇",
+            8
+          ]
+        ]
+      },
+      {
+        "col": "est_date",
+        "non_null": 9985,
+        "missing_pct": 0.15,
+        "unique": 3951,
+        "top": [
+          [
+            "2023-02-22",
+            15
+          ],
+          [
+            "2021-11-11",
+            13
+          ],
+          [
+            "2021-12-23",
+            13
+          ]
+        ]
+      },
+      {
+        "col": "reg_cap",
+        "non_null": 8894,
+        "missing_pct": 11.06,
+        "unique": 443,
+        "top": [
+          [
+            "100.000000",
+            1547
+          ],
+          [
+            "10.000000",
+            1502
+          ],
+          [
+            "50.000000",
+            1082
+          ]
+        ]
+      },
+      {
+        "col": "province",
+        "non_null": 9999,
+        "missing_pct": 0.01,
+        "unique": 13,
+        "top": [
+          [
+            "500000",
+            9952
+          ],
+          [
+            "130000",
+            27
+          ],
+          [
+            "330000",
+            4
+          ]
+        ]
+      },
+      {
+        "col": "city",
+        "non_null": 9999,
+        "missing_pct": 0.01,
+        "unique": 21,
+        "top": [
+          [
+            "500100",
+            9952
+          ],
+          [
+            "130100",
+            23
+          ],
+          [
+            "130800",
+            4
+          ]
+        ]
+      },
+      {
+        "col": "ind_econ_name",
+        "non_null": 0,
+        "missing_pct": 100.0,
+        "unique": 0,
+        "top": []
+      },
+      {
+        "col": "emp_num",
+        "non_null": 550,
+        "missing_pct": 94.5,
+        "unique": 43,
+        "top": [
+          [
+            "1人",
+            107
+          ],
+          [
+            "2人",
+            104
+          ],
+          [
+            "5人",
+            69
+          ]
+        ]
+      },
+      {
+        "col": "ope_scope",
+        "non_null": 0,
+        "missing_pct": 100.0,
+        "unique": 0,
+        "top": []
+      }
+    ],
+    "risk": [
+      {
+        "col": "cai_1",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 25,
+        "top": [
+          [
+            "5",
+            1164
+          ],
+          [
+            "3",
+            820
+          ],
+          [
+            "1",
+            817
+          ]
+        ]
+      },
+      {
+        "col": "s_an_1",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 25,
+        "top": [
+          [
+            "5",
+            1147
+          ],
+          [
+            "1",
+            815
+          ],
+          [
+            "4",
+            806
+          ]
+        ]
+      },
+      {
+        "col": "li_an_1",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 25,
+        "top": [
+          [
+            "5",
+            1138
+          ],
+          [
+            "4",
+            831
+          ],
+          [
+            "2",
+            807
+          ]
+        ]
+      },
+      {
+        "col": "zhi_1",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 21,
+        "top": [
+          [
+            "3",
+            1423
+          ],
+          [
+            "0",
+            1016
+          ],
+          [
+            "2",
+            998
+          ]
+        ]
+      },
+      {
+        "col": "zhuce_money",
+        "non_null": 3665,
+        "missing_pct": 63.35,
+        "unique": 407,
+        "top": [
+          [
+            "10",
+            804
+          ],
+          [
+            "50",
+            508
+          ],
+          [
+            "100",
+            404
+          ]
+        ]
+      },
+      {
+        "col": "qiye_type",
+        "non_null": 10000,
+        "missing_pct": 0.0,
+        "unique": 14,
+        "top": [
+          [
+            "有限责任公司",
+            4287
+          ],
+          [
+            "有限责任公司(自然人独资)",
+            2479
+          ],
+          [
+            "个人独资企业",
+            1418
+          ]
+        ]
+      },
+      {
+        "col": "f_ren",
+        "non_null": 9986,
+        "missing_pct": 0.14,
+        "unique": 9192,
+        "top": [
+          [
+            "尹朝洋",
+            11
+          ],
+          [
+            "王勇",
+            9
+          ],
+          [
+            "刘勇",
+            8
+          ]
+        ]
+      }
+    ]
+  },
+  "checks": {
+    "usc_len": {
+      "18": 10000
+    },
+    "est_bad": 15,
+    "reg_cap_desc": {
+      "count": 8894.0,
+      "mean": 482.17,
+      "std": 4408.61,
+      "min": 0.01,
+      "25%": 10.0,
+      "50%": 50.0,
+      "75%": 200.0,
+      "max": 200000.0
+    },
+    "zhuce_sample": [
+      "17",
+      "10",
+      "5",
+      "13",
+      "50"
+    ],
+    "zhuce_numeric": 3665,
+    "province_top": {
+      "500000": 9952,
+      "130000": 27,
+      "330000": 4
+    },
+    "city_top": {
+      "500100": 9952,
+      "130100": 23,
+      "130800": 4
+    },
+    "join_rate": 0.9969,
+    "ent_empty_cols": [
+      "tax_no",
+      "firm_name_sh",
+      "firm_name_en",
+      "rev_certificates",
+      "ind_econ_code",
+      "ind_econ_name",
+      "insured_emp_num",
+      "ope_address",
+      "reg_address",
+      "ope_addr_code",
+      "reg_addr_code",
+      "ope_scope",
+      "firm_scale",
+      "parent_name",
+      "parent_type",
+      "profile",
+      "firm_name_used"
+    ],
+    "risk_empty_cols": [],
+    "ind_min": 0,
+    "ind_max": 25,
+    "ind_allzero": 0,
+    "ind_means": {
+      "cai_1": 9.47,
+      "cai_2": 9.49,
+      "cai_3": 9.5,
+      "s_an_1": 9.54,
+      "s_an_2": 9.54,
+      "s_an_3": 9.54,
+      "li_an_1": 9.49,
+      "li_an_2": 9.52,
+      "li_an_3": 9.53,
+      "zhi_1": 6.62,
+      "zhi_2": 6.62,
+      "zhi_3": 6.65
+    }
+  }
+}

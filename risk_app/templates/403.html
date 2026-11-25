@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}无访问权限 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="glass p-5" style="max-width:640px;margin:60px auto;text-align:center;">
+  <div style="font-size:64px;line-height:1;color:#f87171;">403</div>
+  <h2 class="page-title mt-3 mb-2" style="font-size:22px;">没有访问权限</h2>
+  <p class="page-sub mb-1">这个页面只对管理员开放，当前账号是普通用户。</p>
+  <p class="page-sub mb-4">如果你认为这是误判，请联系管理员调整角色（用户管理 → 修改角色）。</p>
+  <div class="d-flex gap-2 justify-content-center">
+    <a class="btn btn-sm btn-primary" href="{% url 'risk_app:index' %}">返回首页</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">去看企业信息</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:logout' %}">换个账号登录</a>
+  </div>
+</div>
+{% endblock %}

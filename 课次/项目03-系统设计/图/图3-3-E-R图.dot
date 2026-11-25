@@ -1,0 +1,51 @@
+digraph ER {
+  graph [rankdir=LR, fontname="Microsoft YaHei", fontsize=11, nodesep=0.5, ranksep=0.9, pad=0.2];
+  node [shape=plaintext, fontname="Microsoft YaHei", fontsize=9];
+  edge [color="#555555", arrowsize=0.8, fontname="Microsoft YaHei", fontsize=9];
+
+  ent [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1F3A5F"><FONT COLOR="white"><B>enterprise 企业</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK  id</TD></TR>
+    <TR><TD ALIGN="LEFT">UK  firm_eid</TD></TR>
+    <TR><TD ALIGN="LEFT">UK  usc_code</TD></TR>
+    <TR><TD ALIGN="LEFT">    firm_name</TD></TR>
+    <TR><TD ALIGN="LEFT">    legal_rep</TD></TR>
+    <TR><TD ALIGN="LEFT">    ope_status</TD></TR>
+    <TR><TD ALIGN="LEFT">    reg_cap</TD></TR>
+  </TABLE>>];
+
+  risk [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1F3A5F"><FONT COLOR="white"><B>risk_indicator 风险指标</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK  id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK  enterprise_id</TD></TR>
+    <TR><TD ALIGN="LEFT">    12 项原始指标</TD></TR>
+    <TR><TD ALIGN="LEFT">    四维得分 / 综合得分</TD></TR>
+    <TR><TD ALIGN="LEFT">    risk_level</TD></TR>
+  </TABLE>>];
+
+  user [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1F3A5F"><FONT COLOR="white"><B>auth_user 用户</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK  id</TD></TR>
+    <TR><TD ALIGN="LEFT">    username</TD></TR>
+    <TR><TD ALIGN="LEFT">    password（PBKDF2）</TD></TR>
+  </TABLE>>];
+
+  prof [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1F3A5F"><FONT COLOR="white"><B>user_profile 扩展</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK  id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK  user_id（唯一）</TD></TR>
+    <TR><TD ALIGN="LEFT">    role（admin/normal）</TD></TR>
+    <TR><TD ALIGN="LEFT">    department</TD></TR>
+  </TABLE>>];
+
+  audit [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4">
+    <TR><TD BGCOLOR="#1F3A5F"><FONT COLOR="white"><B>audit_log 审计日志</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT">PK  id</TD></TR>
+    <TR><TD ALIGN="LEFT">FK  user_id</TD></TR>
+    <TR><TD ALIGN="LEFT">    action / target / ip</TD></TR>
+  </TABLE>>];
+
+  ent -> risk [label="1 : N 拥有", arrowhead="crow"];
+  user -> prof [label="1 : 1 扩展", dir=both, arrowtail="tee", arrowhead="tee"];
+  user -> audit [label="1 : N 产生"];
+}

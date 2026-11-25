@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}本地模型识别 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">本地模型识别</h2>
+    <div class="page-sub">
+      文本经 Docker 部署的轻量 NLP 服务（Flask + jieba）识别：四类词库打分 → 加权综合分 → 关键词与高亮。
+      数据不出本机。
+    </div>
+  </div>
+  <div class="d-flex gap-2 align-items-center">
+    <span class="chip">服务地址 {{ service_url }}</span>
+    {% if service_ok %}
+      <span class="badge bg-success">NLP 服务在线</span>
+    {% else %}
+      <span class="badge bg-danger">NLP 服务离线</span>
+    {% endif %}
+  </div>
+</div>
+
+{% if not service_ok %}
+<div class="alert alert-warning py-2">
+  <strong>微服务未启动。</strong> 先运行容器：
+  <code>docker run -d -p 5000:5000 --name nlp-risk nlp-risk</code>，
+  或本地调试用 <code>nlp_service\run_local.bat</code>。页面不会因此报错，提交时会给出同样的提示。
+</div>
+{% endif %}
+
+<div class="row g-3">
+  <!-- 左：输入 -->
+  <div class="col-lg-5">
+    <div class="glass p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">① 待分析文本</h6>
+        <button class="btn btn-sm btn-outline-primary" id="btn-demo">填入示例</button>
+      </div>
+      <textarea id="inputText" class="form-control" rows="14" style="font-size:13px;line-height:1.8;">{{ demo_text }}</textarea>
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <span class="page-sub" id="charCount">0 字</span>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" id="btn-clear">清空</button>
+          <button class="btn btn-sm btn-primary" id="btn-run">开始识别</button>
+        </div>
+      </div>
+      <div class="page-sub mt-2" style="font-size:11px;">
+        读法：词库按「原文包含」匹配（多字词不会被分词切碎），每类得分封顶 100；
+        综合分 = 合规 40% + 财务 30% + 经营 20% + 舆情 10%；≥60 高、≥30 中、其余低。
+      </div>
+    </div>
+  </div>
+
+  <!-- 右：结果 -->
+  <div class="col-lg-7">
+    <div class="glass p-3 h-100">
+      <h6 class="mb-2" style="color:#a5f3fc;letter-spacing:.1em;">② 识别结果</h6>
+
+      <div id="emptyState" class="page-sub py-5 text-center">
+        点「开始识别」后，这里显示综合分、四维度得分、命中关键词与高亮文本。
+      </div>
+
+      <div id="warnState" class="alert alert-warning py-2" style="display:none;"></div>
+
+      <div id="resultContent" style="display:none;">
+        <div class="d-flex align-items-end gap-3 mb-1">
+          <div style="font-size:52px;line-height:1;font-weight:700;color:#fde68a;" id="totalScore">0</div>
+          <div class="mb-2">
+            <div class="page-sub" style="font-size:11px;">综合风险分</div>
+            <span class="badge" id="riskLevel">—</span>
+            <span class="page-sub ms-2" id="summary"></span>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-3 mt-2">
+          <div class="col-6 col-md-3"><div class="stat-card"><div class="label">财务</div><div class="num" style="font-size:24px;" id="fs">0</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-card"><div class="label">经营</div><div class="num" style="font-size:24px;" id="os">0</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-card"><div class="label">合规</div><div class="num" style="font-size:24px;" id="cs">0</div></div></div>
+          <div class="col-6 col-md-3"><div class="stat-card"><div class="label">舆情</div><div class="num" style="font-size:24px;" id="ps">0</div></div></div>
+        </div>
+
+        <div class="mb-2">
+          <div class="page-sub mb-1" style="font-size:11px;">命中关键词（按类别）</div>
+          <div id="keywordsArea"></div>
+        </div>
+
+        <div class="mb-1">
+          <div class="page-sub mb-1" style="font-size:11px;">高亮文本（命中词加粗标红）</div>
+          <div id="highlightedText" style="background:rgba(15,23,42,.6);border:1px solid rgba(103,232,249,.18);
+               border-radius:8px;padding:12px 14px;font-size:13px;line-height:2;color:#cbd5e1;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+  .nlp-hit { color:#fb7185; background:rgba(251,113,133,.12); padding:0 2px; border-radius:3px; }
+</style>
+<script>
+(function () {
+  const box = document.getElementById("inputText");
+  const demo = box.value;
+  const charCount = document.getElementById("charCount");
+
+  function refresh() { charCount.textContent = box.value.length + " 字"; }
+  refresh();
+  box.addEventListener("input", refresh);
+
+  document.getElementById("btn-demo").addEventListener("click", () => { box.value = demo; refresh(); });
+  document.getElementById("btn-clear").addEventListener("click", () => {
+    box.value = ""; refresh();
+    document.getElementById("resultContent").style.display = "none";
+    document.getElementById("warnState").style.display = "none";
+    document.getElementById("emptyState").style.display = "";
+  });
+
+  const LEVEL = {high: ["高风险", "bg-danger"], medium: ["中风险", "bg-warning text-dark"], low: ["低风险", "bg-success"]};
+  const COLORS = {"财务": "danger", "经营": "success", "合规": "warning", "舆情": "info"};
+
+  async function run() {
+    const text = box.value.trim();
+    const btn = document.getElementById("btn-run");
+    const warn = document.getElementById("warnState");
+    if (!text) { warn.style.display = ""; warn.textContent = "请输入文本"; return; }
+
+    btn.disabled = true; btn.textContent = "识别中…";
+    warn.style.display = "none";
+    try {
+      const resp = await fetch("{% url 'risk_app:model_analyze' %}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "X-CSRFToken": window.djangoCsrfToken || ""},
+        body: JSON.stringify({text: text})
+      });
+      const res = await resp.json();
+      if (res.code !== 0) {
+        // 降级：服务未启动 / 文本为空，不报 500，只提示
+        document.getElementById("resultContent").style.display = "none";
+        document.getElementById("emptyState").style.display = "none";
+        warn.style.display = "";
+        warn.textContent = res.message || "识别失败";
+        return;
+      }
+      const d = res.data;
+      document.getElementById("emptyState").style.display = "none";
+      warn.style.display = "none";
+      document.getElementById("resultContent").style.display = "";
+
+      document.getElementById("totalScore").textContent = d.total_score;
+      const lv = LEVEL[d.risk_level] || ["未知", "bg-secondary"];
+      document.getElementById("riskLevel").textContent = lv[0];
+      document.getElementById("riskLevel").className = "badge " + lv[1];
+      document.getElementById("summary").textContent = d.summary;
+      document.getElementById("fs").textContent = d.finance_score;
+      document.getElementById("os").textContent = d.operation_score;
+      document.getElementById("cs").textContent = d.compliance_score;
+      document.getElementById("ps").textContent = d.public_opinion_score;
+
+      let html = "";
+      Object.keys(COLORS).forEach(function (cat) {
+        const kws = (d.keywords[cat] || []);
+        if (kws.length) {
+          html += '<div class="mb-1"><span class="badge bg-' + COLORS[cat] + ' me-2">' + cat + "</span>"
+               + kws.join("、") + "</div>";
+        }
+      });
+      document.getElementById("keywordsArea").innerHTML = html || '<span class="page-sub">未识别到风险关键词</span>';
+      document.getElementById("highlightedText").innerHTML = d.highlighted_text;
+    } catch (err) {
+      warn.style.display = "";
+      warn.textContent = "请求失败：" + err;
+    } finally {
+      btn.disabled = false; btn.textContent = "开始识别";
+    }
+  }
+
+  document.getElementById("btn-run").addEventListener("click", run);
+  box.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+  });
+})();
+</script>
+{% endblock %}

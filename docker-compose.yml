@@ -1,0 +1,36 @@
+version: "3.8"
+
+# 一体化编排：Django 主站 + 本地 NLP 微服务
+# 用法：在项目根目录执行  docker compose up -d
+# 说明：Django 侧通过 http://nlp:5000 访问服务（容器内用服务名，不是 127.0.0.1）
+
+services:
+  nlp:
+    build: ./nlp_service
+    image: nlp-risk:latest
+    container_name: nlp-risk
+    ports:
+      - "5000:5000"          # 宿主机调试用；生产可只保留内网
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=2).status==200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: risk-web
+    depends_on:
+      nlp:
+        condition: service_healthy
+    environment:
+      # 容器内互访用服务名；宿主机直跑时仍用 127.0.0.1:5000
+      NLP_SERVICE_URL: http://nlp:5000
+      DJANGO_ALLOWED_HOSTS: 127.0.0.1,localhost,web
+    ports:
+      - "8021:8021"
+    restart: unless-stopped

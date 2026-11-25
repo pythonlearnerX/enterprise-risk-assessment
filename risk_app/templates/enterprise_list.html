@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}企业信息 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">企业信息</h2>
+    <div class="page-sub">点首页/图表的任一数据面板可跳到这里，并自动带上筛选条件。</div>
+  </div>
+  <span class="chip">共 {{ total }} 家</span>
+</div>
+
+<form class="filter-bar row g-2 align-items-end" method="get">
+  <div class="col-md-3">
+    <label class="form-label small mb-1">企业名称</label>
+    <input type="text" name="keyword" value="{{ keyword }}" class="form-control form-control-sm" placeholder="输入关键词">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small mb-1">经营状态</label>
+    <select name="status" class="form-select form-select-sm">
+      <option value="">全部</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small mb-1">资本区间（万）</label>
+    <select name="cap" class="form-select form-select-sm">
+      <option value="">全部</option>
+      {% for c in cap_choices %}<option value="{{ c }}" {% if cap == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small mb-1">成立年份</label>
+    <select name="year" class="form-select form-select-sm">
+      <option value="">全部</option>
+      {% for y in year_choices %}<option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small mb-1">登记机关</label>
+    <input type="text" name="org" value="{{ org }}" class="form-control form-control-sm" placeholder="如：渝北区市场监督管理局">
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label small mb-1">企业类型代码</label>
+    <input type="text" name="type" value="{{ type }}" class="form-control form-control-sm" placeholder="如：1100">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small mb-1">企业类别</label>
+    <select name="category" class="form-select form-select-sm">
+      <option value="">全部</option>
+      <option value="E" {% if category == 'E' %}selected{% endif %}>企业</option>
+      <option value="P" {% if category == 'P' %}selected{% endif %}>个体户</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label small mb-1">排序</label>
+    <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="new" {% if sort == 'new' %}selected{% endif %}>最新登记</option>
+      <option value="cap_desc" {% if sort == 'cap_desc' %}selected{% endif %}>注册资本降序</option>
+      <option value="old" {% if sort == 'old' %}selected{% endif %}>成立最早</option>
+    </select>
+  </div>
+  <div class="col-md-1"><button class="btn btn-sm btn-primary w-100">查询</button></div>
+  <div class="col-md-2">
+    <a class="btn btn-sm btn-outline-primary w-100" href="?{{ qs_suffix }}{% if qs_suffix %}&{% endif %}export=csv">导出 CSV</a>
+  </div>
+  <div class="col-md-2">
+    <a class="btn btn-sm btn-outline-primary w-100" href="{% url 'risk_app:enterprise_list' %}">清空条件</a>
+  </div>
+</form>
+
+{% if chips %}
+  <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+    <span class="page-sub">当前条件：</span>
+    {% for label, key in chips %}
+      <span class="chip">{{ label }}</span>
+    {% endfor %}
+    <a class="small" href="{% url 'risk_app:enterprise_list' %}">清除</a>
+  </div>
+{% endif %}
+
+<div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+  <span class="page-sub">快捷筛选：</span>
+  <a class="chip" href="{% url 'risk_app:enterprise_list' %}">全部</a>
+  <a class="chip" href="?status=1">在营</a>
+  <a class="chip" href="?status=2">注销</a>
+  <a class="chip" href="?status=3">吊销</a>
+  <a class="chip" href="?cap=1000%2B">1000 万以上</a>
+  <a class="chip" href="?year=2015-2019">2015–2019 成立</a>
+</div>
+
+{% if ab_variant == 'B' %}
+<div class="page-sub mb-2">当前每页 {{ page_size }} 条（实验 B 组：更多行数，减少翻页）。</div>
+{% endif %}
+
+<form method="get" action="{% url 'risk_app:chart_compare' %}">
+<p class="page-sub mb-2">勾选 2–4 家企业后点“对比选中”。</p>
+<div class="table-responsive bg-white">
+  <table class="table table-bordered table-hover table-sm mb-0">
+    <thead>
+      <tr>
+        <th style="width:36px;"></th><th>企业名称</th><th>统一社会信用代码</th><th>法定代表人</th>
+        <th>经营状态</th><th>注册资本(万元)</th><th>成立日期</th><th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ent in page_obj %}
+        <tr>
+          <td><input type="checkbox" name="ids" value="{{ ent.id }}" class="form-check-input"></td>
+          <td class="fw-bold">{{ ent.firm_name }}</td>
+          <td><code>{{ ent.usc_code|default:"-" }}</code></td>
+          <td>{{ ent.legal_rep|default:"-" }}</td>
+          <td>
+            {% if ent.ope_status == '1' %}<span class="badge bg-success">在营</span>
+            {% elif ent.ope_status == '2' %}<span class="badge bg-secondary">注销</span>
+            {% elif ent.ope_status == '3' %}<span class="badge bg-warning text-dark">吊销</span>
+            {% else %}{{ ent.ope_status|default:"-" }}{% endif %}
+          </td>
+          <td>{{ ent.reg_cap|floatformat:2|default:"-" }}</td>
+          <td>{{ ent.est_date|date:"Y-m-d"|default:"-" }}</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_detail' ent.id %}">详情</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-center muted py-4">暂无数据，请调整筛选条件</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="mt-2 d-flex gap-2">
+  <button type="submit" class="btn btn-sm btn-primary">对比选中</button>
+  <span class="page-sub align-self-center">最多 4 家，少于 2 家会提示重新选择。</span>
+</div>
+</form>
+
+<nav class="mt-3 d-flex justify-content-between align-items-center small">
+  <span class="muted">第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页，每页 10 条</span>
+  <ul class="pagination pagination-sm mb-0">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if qs_suffix %}&{{ qs_suffix }}{% endif %}">上一页</a></li>
+    {% else %}<li class="page-item disabled"><span class="page-link">上一页</span></li>{% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if num == page_obj.number %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if qs_suffix %}&{{ qs_suffix }}{% endif %}">{{ num }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if qs_suffix %}&{{ qs_suffix }}{% endif %}">下一页</a></li>
+    {% else %}<li class="page-item disabled"><span class="page-link">下一页</span></li>{% endif %}
+  </ul>
+</nav>
+{% endblock %}

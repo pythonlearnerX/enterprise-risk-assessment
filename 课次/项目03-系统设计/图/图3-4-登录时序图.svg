@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="410.4pt" height="252.576pt" viewBox="0 0 410.4 252.576" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-05T09:41:20.603962</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.7, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 252.576 
+L 410.4 252.576 
+L 410.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 44.496 228.74112 
+L 44.496 28.7136 
+" clip-path="url(#p55a2afeb03)" style="fill: none; stroke: #c9d1db; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 132.8832 228.74112 
+L 132.8832 28.7136 
+" clip-path="url(#p55a2afeb03)" style="fill: none; stroke: #c9d1db; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 221.2704 228.74112 
+L 221.2704 28.7136 
+" clip-path="url(#p55a2afeb03)" style="fill: none; stroke: #c9d1db; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 301.6224 228.74112 
+L 301.6224 28.7136 
+" clip-path="url(#p55a2afeb03)" style="fill: none; stroke: #c9d1db; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 373.9392 228.74112 
+L 373.9392 28.7136 
+" clip-path="url(#p55a2afeb03)" style="fill: none; stroke: #c9d1db; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="44.496" y="18.704925" transform="rotate(-0 44.496 18.704925)">浏览器</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="132.8832" y="18.669769" transform="rotate(-0 132.8832 18.669769)">登录视图</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="221.2704" y="18.740081" transform="rotate(-0 221.2704 18.740081)">认证后端</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="301.6224" y="18.775238" transform="rotate(-0 301.6224 18.775238)">会话</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="373.9392" y="18.593128" transform="rotate(-0 373.9392 18.593128)">MySQL</text>
+   </g>
+   <g id="patch_2">
+    <path d="M 46.494746 40.9104 
+Q 88.688472 40.9104 129.987771 40.9104 
+" style="fill: none; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 126.787771 39.3104 
+L 129.987771 40.9104 
+L 126.787771 42.5104 
+z
+" style="fill: #374151; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_6">
+    <g id="patch_3">
+     <path d="M 26.751038 39.840921 
+L 150.628163 39.840921 
+L 150.628163 30.768921 
+L 26.751038 30.768921 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="88.6896" y="37.495296" transform="rotate(-0 88.6896 37.495296)">① POST /login/（账号、密码、CSRF）</text>
+   </g>
+   <g id="patch_4">
+    <path d="M 134.881946 60.42528 
+Q 177.075672 60.42528 218.374971 60.42528 
+" style="fill: none; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 215.174971 58.82528 
+L 218.374971 60.42528 
+L 215.174971 62.02528 
+z
+" style="fill: #374151; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <g id="patch_5">
+     <path d="M 151.996613 59.342301 
+L 202.156988 59.342301 
+L 202.156988 50.283801 
+L 151.996613 50.283801 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="177.0768" y="57.010176" transform="rotate(-0 177.0768 57.010176)">② authenticate()</text>
+   </g>
+   <g id="patch_6">
+    <path d="M 223.269146 79.94016 
+Q 297.60409 79.94016 371.044606 79.94016 
+" style="fill: none; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 367.844606 78.34016 
+L 371.044606 79.94016 
+L 367.844606 81.54016 
+z
+" style="fill: #374151; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_8">
+    <g id="patch_7">
+     <path d="M 253.01655 78.870681 
+L 342.19305 78.870681 
+L 342.19305 69.798681 
+L 253.01655 69.798681 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="297.6048" y="76.525056" transform="rotate(-0 297.6048 76.525056)">③ 查询 auth_user / 校验哈希</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 371.940454 99.45504 
+Q 297.60551 99.45504 224.164994 99.45504 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 227.364994 101.05504 
+L 224.164994 99.45504 
+L 227.364994 97.85504 
+z
+" style="fill: #374151; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_9">
+    <g id="patch_9">
+     <path d="M 265.614863 98.372061 
+L 329.594738 98.372061 
+L 329.594738 90.038061 
+L 265.614863 90.038061 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="297.6048" y="96.039936" transform="rotate(-0 297.6048 96.039936)">④ 返回用户或 None</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 219.271654 118.96992 
+Q 177.077928 118.96992 135.778629 118.96992 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 138.978629 120.56992 
+L 135.778629 118.96992 
+L 138.978629 117.36992 
+z
+" style="fill: #374151; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <g id="patch_11">
+     <path d="M 157.3848 117.886941 
+L 196.7688 117.886941 
+L 196.7688 109.552941 
+L 157.3848 109.552941 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="177.0768" y="115.554816" transform="rotate(-0 177.0768 115.554816)">⑤ 认证结果</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 134.883785 138.4848 
+Q 217.251938 138.4848 298.725664 138.4848 
+" style="fill: none; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 295.525664 136.8848 
+L 298.725664 138.4848 
+L 295.525664 140.0848 
+z
+" style="fill: #374151; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_11">
+    <g id="patch_13">
+     <path d="M 190.463175 137.415321 
+L 244.042425 137.415321 
+L 244.042425 128.343321 
+L 190.463175 128.343321 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="217.2528" y="135.069696" transform="rotate(-0 217.2528 135.069696)">⑥ login() 写会话</text>
+   </g>
+   <g id="patch_14">
+    <path d="M 299.62537 157.99968 
+Q 173.059231 157.99968 47.387518 157.99968 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 50.587518 159.59968 
+L 47.387518 157.99968 
+L 50.587518 156.39968 
+z
+" style="fill: #374151; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_12">
+    <g id="patch_15">
+     <path d="M 136.466888 156.916701 
+L 209.651513 156.916701 
+L 209.651513 148.582701 
+L 136.466888 148.582701 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="173.0592" y="154.584576" transform="rotate(-0 173.0592 154.584576)">⑦ Set-Cookie: sessionid</text>
+   </g>
+   <g id="patch_16">
+    <path d="M 130.884454 177.51456 
+Q 88.690728 177.51456 47.391429 177.51456 
+" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 50.591429 179.11456 
+L 47.391429 177.51456 
+L 50.591429 175.91456 
+z
+" style="fill: #374151; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #374151; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_13">
+    <g id="patch_17">
+     <path d="M 52.799288 176.431581 
+L 124.579913 176.431581 
+L 124.579913 168.097581 
+L 52.799288 168.097581 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #222222" x="88.6896" y="174.099456" transform="rotate(-0 88.6896 174.099456)">⑧ 302 跳转 next / 首页</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #6b7280" x="28.4256" y="240.93792" transform="rotate(-0 28.4256 240.93792)">注：认证失败统一提示“用户名或密码错误”，不区分账号存在与否。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p55a2afeb03">
+   <rect x="4.32" y="4.32" width="401.76" height="243.936"/>
+  </clipPath>
+ </defs>
+</svg>

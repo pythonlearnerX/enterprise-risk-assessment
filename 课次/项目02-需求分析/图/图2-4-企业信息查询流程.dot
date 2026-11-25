@@ -1,0 +1,17 @@
+digraph G {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.55, ranksep=0.32, pad=0.15];
+  node [fontname="Microsoft YaHei", fontsize=10, penwidth=1.0, shape=box, style="rounded,filled", fillcolor="#EAF1FB"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#555555", arrowsize=0.7];
+  start [shape=ellipse, style=filled, fillcolor="#E8F5E9", label="开始"];
+  end [shape=ellipse, style=filled, fillcolor="#FDE7E7", label="结束"];
+
+  start -> kw;
+  kw [label="输入关键字并选择类别与状态"];
+  kw -> valid [label=" "]; valid [label="参数格式校验", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  valid -> err [label=" 不合法"]; err [label="提示格式错误"]; err -> kw;
+  valid -> query [label=" 合法"]; query [label="按条件查询数据库"];
+  query -> got [label=" "]; got [label="是否有结果?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  got -> empty [label=" 否"]; empty [label="列表区提示暂无数据"]; empty -> end;
+  got -> page [label=" 是"]; page [label="分页展示，每页 10 条"];
+  page -> detail [label=" 点击详情"]; detail [label="展示企业完整信息与风险记录"]; detail -> end;
+}

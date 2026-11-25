@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="399.24pt" height="285.84pt" viewBox="0 0 399.24 285.84" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-05T09:41:20.321484</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.7, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 285.84 
+L 399.24 285.84 
+L 399.24 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 19.944 104.112 
+L 137.124 104.112 
+L 137.124 23.724 
+L 19.944 23.724 
+z
+" clip-path="url(#pccf936128c)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 19.944 41.742 
+L 137.124 41.742 
+L 137.124 23.724 
+L 19.944 23.724 
+z
+" clip-path="url(#pccf936128c)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 246.492 109.656 
+L 375.39 109.656 
+L 375.39 38.97 
+L 246.492 38.97 
+z
+" clip-path="url(#pccf936128c)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 246.492 56.988 
+L 375.39 56.988 
+L 375.39 38.97 
+L 246.492 38.97 
+z
+" clip-path="url(#pccf936128c)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 19.944 231.624 
+L 121.5 231.624 
+L 121.5 180.342 
+L 19.944 180.342 
+z
+" clip-path="url(#pccf936128c)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 19.944 198.36 
+L 121.5 198.36 
+L 121.5 180.342 
+L 19.944 180.342 
+z
+" clip-path="url(#pccf936128c)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 152.748 237.168 
+L 254.304 237.168 
+L 254.304 185.886 
+L 152.748 185.886 
+z
+" clip-path="url(#pccf936128c)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 152.748 203.904 
+L 254.304 203.904 
+L 254.304 185.886 
+L 152.748 185.886 
+z
+" clip-path="url(#pccf936128c)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 277.74 242.712 
+L 387.108 242.712 
+L 387.108 181.728 
+L 277.74 181.728 
+z
+" clip-path="url(#pccf936128c)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 277.74 199.746 
+L 387.108 199.746 
+L 387.108 181.728 
+L 277.74 181.728 
+z
+" clip-path="url(#pccf936128c)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 137.124 70.848 
+Q 191.808 70.848 245.597573 70.848 
+" clip-path="url(#pccf936128c)" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 241.997573 69.048 
+L 245.597573 70.848 
+L 241.997573 72.648 
+z
+" clip-path="url(#pccf936128c)" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 121.5 192.816 
+Q 137.124 192.816 151.853573 192.816 
+" clip-path="url(#pccf936128c)" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 148.253573 191.016 
+L 151.853573 192.816 
+L 148.253573 194.616 
+z
+" clip-path="url(#pccf936128c)" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 254.304 203.904 
+Q 266.022 203.904 276.845573 203.904 
+" clip-path="url(#pccf936128c)" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+    <path d="M 273.245573 202.104 
+L 276.845573 203.904 
+L 273.245573 205.704 
+z
+" clip-path="url(#pccf936128c)" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="78.534" y="35.401187" transform="rotate(-0 78.534 35.401187)">enterprise 企业</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="27.756" y="50.8896" transform="rotate(-0 27.756 50.8896)">PK</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="50.8896" transform="rotate(-0 51.192 50.8896)">id</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="27.756" y="60.5916" transform="rotate(-0 27.756 60.5916)">UK</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="60.5916" transform="rotate(-0 51.192 60.5916)">firm_eid</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="27.756" y="70.2936" transform="rotate(-0 27.756 70.2936)">UK</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="70.2936" transform="rotate(-0 51.192 70.2936)">usc_code</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="79.9956" transform="rotate(-0 51.192 79.9956)">firm_name</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="89.6976" transform="rotate(-0 51.192 89.6976)">legal_rep</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="99.3996" transform="rotate(-0 51.192 99.3996)">reg_cap</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="310.941" y="50.656125" transform="rotate(-0 310.941 50.656125)">risk_indicator 风险指标</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="254.304" y="66.1356" transform="rotate(-0 254.304 66.1356)">PK</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="277.74" y="66.1356" transform="rotate(-0 277.74 66.1356)">id</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="254.304" y="75.8376" transform="rotate(-0 254.304 75.8376)">FK</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="277.74" y="75.8376" transform="rotate(-0 277.74 75.8376)">enterprise_id</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="277.74" y="85.5396" transform="rotate(-0 277.74 85.5396)">12 项原始指标</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="277.74" y="95.2416" transform="rotate(-0 277.74 95.2416)">四维得分</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="277.74" y="104.9436" transform="rotate(-0 277.74 104.9436)">total_risk_score</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="70.722" y="192.010938" transform="rotate(-0 70.722 192.010938)">auth_user 用户</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="27.756" y="207.5076" transform="rotate(-0 27.756 207.5076)">PK</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="207.5076" transform="rotate(-0 51.192 207.5076)">id</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="217.2096" transform="rotate(-0 51.192 217.2096)">username</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="51.192" y="226.9116" transform="rotate(-0 51.192 226.9116)">password</text>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="203.526" y="197.520563" transform="rotate(-0 203.526 197.520563)">user_profile 扩展</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="160.56" y="213.0516" transform="rotate(-0 160.56 213.0516)">PK</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="183.996" y="213.0516" transform="rotate(-0 183.996 213.0516)">id</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="160.56" y="222.7536" transform="rotate(-0 160.56 222.7536)">FK</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="183.996" y="222.7536" transform="rotate(-0 183.996 222.7536)">user_id</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="183.996" y="232.4556" transform="rotate(-0 183.996 232.4556)">role</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 8.8px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="332.424" y="193.37975" transform="rotate(-0 332.424 193.37975)">audit_log 审计</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="285.552" y="208.8936" transform="rotate(-0 285.552 208.8936)">PK</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="308.988" y="208.8936" transform="rotate(-0 308.988 208.8936)">id</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #c9a66b" x="285.552" y="218.5956" transform="rotate(-0 285.552 218.5956)">FK</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="308.988" y="218.5956" transform="rotate(-0 308.988 218.5956)">user_id</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="308.988" y="228.2976" transform="rotate(-0 308.988 228.2976)">action</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 7.6px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="308.988" y="237.9996" transform="rotate(-0 308.988 237.9996)">ip</text>
+   </g>
+   <g id="text_37">
+    <g id="patch_15">
+     <path d="M 183.594 68.924241 
+L 200.022 68.924241 
+L 200.022 60.574959 
+L 183.594 60.574959 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7.4px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #6b7280" x="191.808" y="66.527334" transform="rotate(-0 191.808 66.527334)">1 : N</text>
+   </g>
+   <g id="text_38">
+    <g id="patch_16">
+     <path d="M 130.131656 190.666584 
+L 144.116344 190.666584 
+L 144.116344 182.768616 
+L 130.131656 182.768616 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #6b7280" x="137.124" y="188.399241" transform="rotate(-0 137.124 188.399241)">1 : 1</text>
+   </g>
+   <g id="text_39">
+    <g id="patch_17">
+     <path d="M 258.252 201.754584 
+L 273.792 201.754584 
+L 273.792 193.856616 
+L 258.252 193.856616 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 7px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #6b7280" x="266.022" y="199.487241" transform="rotate(-0 266.022 199.487241)">1 : N</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 7.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #6b7280" x="199.62" y="264.888" transform="rotate(-0 199.62 264.888)">注：企业—风险指标 1:N；用户—用户扩展 1:1；用户—审计日志 1:N。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pccf936128c">
+   <rect x="4.32" y="4.32" width="390.6" height="277.2"/>
+  </clipPath>
+ </defs>
+</svg>

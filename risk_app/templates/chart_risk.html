@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}风险可视化 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">风险数据可视化</h2>
+    <div class="page-sub">百分制（0–100），悬停看数值，图例可开关，支持导出 SVG / PNG。</div>
+  </div>
+  <span class="chip">记录 {{ s.risk_count }} 条</span>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:risk_list' %}">
+      <div class="label">风险记录 <span class="go">查看 →</span></div>
+      <div class="num">{{ s.risk_count }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:risk_list' %}?sort=score_asc">
+      <div class="label">平均得分 <span class="go">查看 →</span></div>
+      <div class="num">{{ s.avg_score }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:risk_list' %}?sort=score_desc">
+      <div class="label">最高得分 <span class="go">查看 →</span></div>
+      <div class="num">{{ s.max_score }}</div>
+    </a>
+  </div>
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:risk_list' %}?level=high">
+      <div class="label">高风险企业 <span class="go">查看 →</span></div>
+      <div class="num" style="color:#fda4af;">{{ s.high_count }}</div>
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-level">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">风险等级分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_risk" data-ai-target="level" data-ai-title="风险等级分布">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:risk_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：等级占比看结构；低风险占七成说明阈值 60/80 偏松，高分档样本少。</div>
+      <div id="chart-level" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-score">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">得分分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_risk" data-ai-target="score" data-ai-title="得分分布">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:risk_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：柱高是家数；40–59 出现“塌陷”说明评分在 60 附近有断档，是阈值效应。</div>
+      <div id="chart-score" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3" id="box-dims">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">四维平均得分</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_risk" data-ai-target="dims" data-ai-title="四维平均得分">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:risk_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：四维越接近正多边形说明越均衡；某角外凸即该维度是主要风险来源。</div>
+      <div id="chart-dims" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">风险得分 TOP 10</h6>
+        <a class="small" href="{% url 'risk_app:risk_list' %}">风险库 →</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>#</th><th>企业名称</th><th>综合得分</th><th>风险等级</th><th></th></tr></thead>
+          <tbody>
+            {% for r in s.top %}
+              <tr>
+                <td class="mono">{{ forloop.counter }}</td>
+                <td>{{ r.name }}</td>
+                <td class="mono">{{ r.total_risk_score }}</td>
+                <td>
+                  {% if r.risk_level == 'high' %}<span class="badge bg-danger">高风险</span>
+                  {% elif r.risk_level == 'medium' %}<span class="badge bg-warning">中风险</span>
+                  {% else %}<span class="badge bg-success">低风险</span>{% endif %}
+                </td>
+                <td class="text-end"><a class="small" href="{% url 'risk_app:risk_list' %}?keyword={{ r.name|urlencode }}">查看</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+fetch("{% url 'risk_app:chart_data_risk' %}").then(r => r.json()).then(function (d) {
+  const c1 = makeChart(document.getElementById("chart-level"), {
+    tooltip: {trigger: "item", formatter: "{b}<br/>{c} 条（{d}%）"},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    series: [{
+      type: "pie", radius: ["42%", "68%"], center: ["50%", "46%"],
+      itemStyle: {borderColor: "#0b1220", borderWidth: 2},
+      label: {color: "#cbd5e1", formatter: "{b}\n{c}"},
+      data: d.levels
+    }]
+  });
+  bindExport(document.getElementById("box-level"), c1, "风险等级分布");
+
+  const c2 = makeChart(document.getElementById("chart-score"), {
+    tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+    grid: {left: 50, right: 20, top: 30, bottom: 40},
+    xAxis: Object.assign({type: "category", data: d.hist.labels}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    series: [{
+      type: "bar", data: d.hist.values, barWidth: "55%",
+      itemStyle: {borderRadius: [4, 4, 0, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+          [{offset: 0, color: "#f87171"}, {offset: 1, color: "rgba(248,113,113,.15)"}])},
+      label: {show: true, position: "top", color: "#93a8c4", fontSize: 11}
+    }]
+  });
+  bindExport(document.getElementById("box-score"), c2, "企业风险得分分布");
+
+  const c3 = makeChart(document.getElementById("chart-dims"), {
+    tooltip: {trigger: "item"},
+    radar: {
+      indicator: d.dims.map(x => ({name: x.name, max: 100})),
+      radius: "62%", center: ["50%", "48%"],
+      axisName: {color: "#93a8c4"},
+      splitLine: {lineStyle: {color: CHART_GRID}},
+      splitArea: {areaStyle: {color: ["rgba(34,211,238,.03)", "transparent"]}},
+      axisLine: {lineStyle: {color: CHART_GRID}}
+    },
+    series: [{type: "radar", symbolSize: 4,
+      data: [{name: "四维均分", value: d.dims.map(x => x.value)}]}]
+  });
+  bindExport(document.getElementById("box-dims"), c3, "四维平均得分");
+
+  const RISK = "{% url 'risk_app:risk_list' %}";
+  const LEVEL_MAP = {"低风险": "low", "中风险": "medium", "高风险": "high"};
+  if (c1) c1.on("click", function (p) { const v = LEVEL_MAP[p.name]; if (v) location.href = RISK + "?level=" + v; });
+  if (c2) c2.on("click", function (p) {
+    const parts = String(p.name).split("-");
+    if (parts.length === 2) location.href = RISK + "?score_min=" + parts[0] + "&score_max=" + parts[1];
+  });
+
+});
+</script>
+{% endblock %}

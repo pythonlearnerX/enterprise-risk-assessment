@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block title %}风险详情 · 企业风险评估系统{% endblock %}
+{% block content %}
+<h2 class="page-title">风险详情</h2>
+  <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_report_pdf' risk.enterprise.id %}"
+     target="_blank">导出 PDF 报告</a>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-5">
+    <div class="bg-white border p-3 h-100">
+      <h5 class="mb-1">{{ risk.name }}</h5>
+      <p class="small text-muted mb-3">所属企业：<a href="{% url 'risk_app:enterprise_detail' risk.enterprise.id %}">{{ risk.enterprise.firm_name }}</a></p>
+      <div class="display-5 kpi-num" style="font-size:46px;">{{ risk.total_risk_score|floatformat:2 }}</div>
+      <p class="mt-1">
+        风险等级：
+        {% if risk.risk_level == 'high' %}<span class="badge bg-danger">高风险</span>
+        {% elif risk.risk_level == 'medium' %}<span class="badge bg-warning text-dark">中风险</span>
+        {% else %}<span class="badge bg-success">低风险</span>{% endif %}
+      </p>
+      <p class="small text-muted mb-0">记录时间：{{ risk.create_time|date:"Y-m-d H:i" }}</p>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="bg-white border p-3 h-100">
+      <h6 class="text-muted">四维得分</h6>
+      <table class="table table-sm mb-0">
+        <tr><td>财务风险</td><td class="text-end">{{ risk.financial_score|floatformat:2 }}</td></tr>
+        <tr><td>经营风险</td><td class="text-end">{{ risk.operation_score|floatformat:2 }}</td></tr>
+        <tr><td>合规风险</td><td class="text-end">{{ risk.compliance_score|floatformat:2 }}</td></tr>
+        <tr><td>质量风险</td><td class="text-end">{{ risk.quality_score|floatformat:2 }}</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<h6 class="text-muted">原始指标（12 项）</h6>
+<div class="table-responsive bg-white">
+  <table class="table table-bordered table-sm mb-0">
+    <thead><tr><th>维度</th><th>指标 1</th><th>指标 2</th><th>指标 3</th></tr></thead>
+    <tbody>
+      <tr><td>财务 cai</td><td>{{ risk.cai_1 }}</td><td>{{ risk.cai_2 }}</td><td>{{ risk.cai_3 }}</td></tr>
+      <tr><td>经营 s_an</td><td>{{ risk.s_an_1 }}</td><td>{{ risk.s_an_2 }}</td><td>{{ risk.s_an_3 }}</td></tr>
+      <tr><td>合规 li_an</td><td>{{ risk.li_an_1 }}</td><td>{{ risk.li_an_2 }}</td><td>{{ risk.li_an_3 }}</td></tr>
+      <tr><td>质量 zhi</td><td>{{ risk.zhi_1 }}</td><td>{{ risk.zhi_2 }}</td><td>{{ risk.zhi_3 }}</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="label">全库百分位</div>
+      <div class="num">{{ percentile }}<span class="unit">%</span></div>
+      <div class="page-sub mt-1">高于全库 {{ percentile }}% 的企业（越高越差）</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="label">同规模均值</div>
+      <div class="num">{{ peer_avg }}</div>
+      <div class="page-sub mt-1">同注册资本区间的平均得分</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="label">与同规模差值</div>
+      <div class="num">
+        {% if diff > 0 %}+{% endif %}{{ diff }}
+      </div>
+      <div class="page-sub mt-1">正数表示高于同规模平均</div>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-3 mb-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.12em;">近年评分</h6>
+    {% if has_demo %}<span class="chip">含演示模拟数据</span>{% endif %}
+  </div>
+  {% if snapshots %}
+    <div id="chart-history" class="chart-box mt-2"></div>
+    <div class="page-sub mt-1">
+      数据说明：原始数据集只有一次快照，2023–2025 为演示生成的模拟值，不代表真实历史。
+    </div>
+  {% else %}
+    <p class="page-sub mb-0 mt-2">该企业暂无年度快照；可在后台录入，或运行 <code>seed_demo_history</code> 生成演示数据。</p>
+  {% endif %}
+</div>
+
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-6">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.12em;">评分拆解：12 项 → 四维 → 总分</h6>
+      <div id="chart-sunburst" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3">
+      <h6 style="color:#a5f3fc;letter-spacing:.12em;">逐项贡献瀑布</h6>
+      <div id="chart-waterfall" class="chart-box"></div>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-3 mt-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.12em;">AI 解读</h6>
+    <button class="btn btn-sm btn-ai" id="btn-ai" data-risk="{{ risk.id }}">用我的 Key 解读</button>
+  </div>
+  <div id="ai-result" class="page-sub mt-3" style="white-space:pre-wrap;line-height:1.9;">
+    点按钮调用你自己配置的大模型，返回“主要风险 / 可能原因 / 一条建议”。
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ breakdown|json_script:"breakdown-data" }}
+{% load static %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+{% if snapshots %}
+<script>
+const YEARS = [{% for s in snapshots %}{{ s.year }}{% if not forloop.last %},{% endif %}{% endfor %}];
+const SCORES = [{% for s in snapshots %}{{ s.total_score }}{% if not forloop.last %},{% endif %}{% endfor %}];
+makeChart(document.getElementById("chart-history"), {
+  tooltip: {trigger: "axis"},
+  grid: {left: 50, right: 20, top: 30, bottom: 40},
+  xAxis: Object.assign({type: "category", data: YEARS}, axisStyle()),
+  yAxis: Object.assign({type: "value", max: 100, name: "得分"}, axisStyle()),
+  series: [{
+    type: "line", data: SCORES, smooth: true, symbolSize: 7,
+    lineStyle: {width: 2.5, color: "#22d3ee"},
+    itemStyle: {color: "#5eead4"},
+    areaStyle: {color: new echarts.graphic.LinearGradient(0,0,0,1,
+      [{offset:0,color:"rgba(34,211,238,.35)"},{offset:1,color:"rgba(34,211,238,0)"}])},
+    label: {show: true, position: "top", color: "#93a8c4"}
+  }]
+});
+</script>
+{% endif %}
+<script>
+document.getElementById("btn-ai").addEventListener("click", async function () {
+  const box = document.getElementById("ai-result");
+  const btn = this;
+  box.textContent = "模型生成中，请稍候…";
+  btn.disabled = true;
+  try {
+    const resp = await fetch("{% url 'risk_app:ai_analyze' %}", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "X-CSRFToken": window.djangoCsrfToken || ""},
+      body: JSON.stringify({risk_id: btn.dataset.risk})
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      box.textContent = data.text;
+      box.style.color = "#e6edf7";
+    } else if (data.need_key) {
+      box.innerHTML = '⚠ ' + data.message + ' <a href="{% url "risk_app:ai_settings" %}">去配置</a>';
+      box.style.color = "#fde68a";
+    } else {
+      box.textContent = "❌ " + data.message;
+      box.style.color = "#fda4af";
+    }
+  } catch (e) {
+    box.textContent = "❌ 请求失败：" + e;
+    box.style.color = "#fda4af";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("breakdown-data").textContent);
+  const DIMMAP = {"cai_1":"财务","cai_2":"财务","cai_3":"财务",
+                  "s_an_1":"经营","s_an_2":"经营","s_an_3":"经营",
+                  "li_an_1":"合规","li_an_2":"合规","li_an_3":"合规",
+                  "zhi_1":"质量","zhi_2":"质量","zhi_3":"质量"};
+  // 旭日：总分 → 四维 → 12 项
+  const children = D.dims.map(d => {
+    const kids = D.items.filter(i => i.dim === d.name)
+      .map(i => ({name: i.name, value: i.value}));
+    const sum = kids.reduce((a, b) => a + b.value, 0);
+    return {name: d.name, value: Math.round(sum * 100) / 100, children: kids};
+  });
+  makeChart(document.getElementById("chart-sunburst"), {
+    tooltip: {formatter: p => p.name + "：" + p.value},
+    series: [{
+      type: "sunburst", data: children, radius: ["18%", "88%"],
+      label: {color: "#0b1220", fontSize: 10},
+      levels: [{}, {r0: "18%", r: "48%", label: {rotate: 0, color: "#cbd5e1"}},
+               {r0: "48%", r: "88%"}],
+      itemStyle: {borderColor: "#0b1220", borderWidth: 1}
+    }]
+  });
+
+  // 瀑布：12 项累加 → 总分
+  const labels = D.items.map(i => i.name);
+  const base = [], values = [];
+  let cum = 0;
+  D.items.forEach(i => { base.push(cum); values.push(i.value); cum += i.value; });
+  const dimColor = {"财务": "rgba(34,211,238,.75)", "经营": "rgba(94,234,212,.7)",
+                    "合规": "rgba(96,165,250,.75)", "质量": "rgba(196,181,253,.75)"};
+  labels.push("总分");
+  base.push(0); values.push(D.total);
+  const color = D.items.map(i => dimColor[i.dim]).concat(["#fde68a"]);
+  makeChart(document.getElementById("chart-waterfall"), {
+    tooltip: {trigger: "axis", formatter: p => {
+      const idx = p[0].dataIndex;
+      return labels[idx] + "：" + (idx === labels.length - 1 ? D.total : values[idx]);
+    }},
+    grid: {left: 46, right: 16, top: 24, bottom: 70},
+    xAxis: Object.assign({type: "category", data: labels,
+      axisLabel: {rotate: 45, color: "#93a8c4", fontSize: 10}}, axisStyle()),
+    yAxis: Object.assign({type: "value", max: 100}, axisStyle()),
+    series: [
+      {type: "bar", stack: "w", data: base, itemStyle: {color: "transparent"}, silent: true},
+      {type: "bar", stack: "w", data: values,
+       itemStyle: {color: p => color[p.dataIndex]}}
+    ]
+  });
+})();
+</script>
+{% endblock %}

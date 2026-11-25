@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="410.4pt" height="263.664pt" viewBox="0 0 410.4 263.664" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-05T09:41:20.865134</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.7, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 263.664 
+L 410.4 263.664 
+L 410.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 124.848 34.92288 
+L 285.552 34.92288 
+L 285.552 14.52096 
+L 124.848 14.52096 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #1f3a5f; stroke: #1f3a5f; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 20.3904 131.832 
+L 128.8656 131.832 
+L 128.8656 55.3248 
+L 20.3904 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 20.3904 70.62624 
+L 128.8656 70.62624 
+L 128.8656 55.3248 
+L 20.3904 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 152.9712 131.832 
+L 261.4464 131.832 
+L 261.4464 55.3248 
+L 152.9712 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 152.9712 70.62624 
+L 261.4464 70.62624 
+L 261.4464 55.3248 
+L 152.9712 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 285.552 131.832 
+L 394.0272 131.832 
+L 394.0272 55.3248 
+L 285.552 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 285.552 70.62624 
+L 394.0272 70.62624 
+L 394.0272 55.3248 
+L 285.552 55.3248 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 20.3904 233.8416 
+L 128.8656 233.8416 
+L 128.8656 157.3344 
+L 20.3904 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 20.3904 172.63584 
+L 128.8656 172.63584 
+L 128.8656 157.3344 
+L 20.3904 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 152.9712 233.8416 
+L 261.4464 233.8416 
+L 261.4464 157.3344 
+L 152.9712 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 152.9712 172.63584 
+L 261.4464 172.63584 
+L 261.4464 157.3344 
+L 152.9712 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 285.552 233.8416 
+L 394.0272 233.8416 
+L 394.0272 157.3344 
+L 285.552 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #ffffff; stroke: #4e6e8e; stroke-width: 0.9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 285.552 172.63584 
+L 394.0272 172.63584 
+L 394.0272 157.3344 
+L 285.552 157.3344 
+z
+" clip-path="url(#p345bc44f03)" style="fill: #f3f6fa"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 20.3904 70.62624 
+L 128.8656 70.62624 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 152.9712 70.62624 
+L 261.4464 70.62624 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 285.552 70.62624 
+L 394.0272 70.62624 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 20.3904 172.63584 
+L 128.8656 172.63584 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 152.9712 172.63584 
+L 261.4464 172.63584 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <path d="M 285.552 172.63584 
+L 394.0272 172.63584 
+" clip-path="url(#p345bc44f03)" style="fill: none; stroke: #4e6e8e; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #ffffff" x="205.2" y="27.482233" transform="rotate(-0 205.2 27.482233)">企业风险评估系统</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="74.628" y="65.216379" transform="rotate(-0 74.628 65.216379)">企业数据管理</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="85.371065" transform="rotate(-0 28.4256 85.371065)">· 企业列表</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="101.198569" transform="rotate(-0 28.4256 101.198569)">· 企业详情</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="117.026072" transform="rotate(-0 28.4256 117.026072)">· 数据导出（扩展）</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="207.2088" y="65.216379" transform="rotate(-0 207.2088 65.216379)">风险指标管理</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="85.371065" transform="rotate(-0 161.0064 85.371065)">· 风险列表</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="101.198569" transform="rotate(-0 161.0064 101.198569)">· 风险详情</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="117.026072" transform="rotate(-0 161.0064 117.026072)">· 指标对比</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="339.7896" y="65.198801" transform="rotate(-0 339.7896 65.198801)">数据可视化</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="85.419112" transform="rotate(-0 293.5872 85.419112)">· 企业分布</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="101.214584" transform="rotate(-0 293.5872 101.214584)">· 风险分布</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="116.978025" transform="rotate(-0 293.5872 116.978025)">· 对比图表</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="74.628" y="167.225979" transform="rotate(-0 74.628 167.225979)">风险报告</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="187.444727" transform="rotate(-0 28.4256 187.444727)">· 报告生成</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="203.176137" transform="rotate(-0 28.4256 203.176137)">· PDF 下载</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="28.4256" y="219.067703" transform="rotate(-0 28.4256 219.067703)">· 报告归档（扩展）</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="207.2088" y="167.208401" transform="rotate(-0 207.2088 167.208401)">用户权限</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="187.356962" transform="rotate(-0 161.0064 187.356962)">· 登录 / 退出</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="203.2402" transform="rotate(-0 161.0064 203.2402)">· 用户管理</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="161.0064" y="219.019657" transform="rotate(-0 161.0064 219.019657)">· 审计日志（扩展）</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #1f3a5f" x="339.7896" y="167.190823" transform="rotate(-0 339.7896 167.190823)">AI 风险分析</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="187.460743" transform="rotate(-0 293.5872 187.460743)">· 大模型预估</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="203.16845" transform="rotate(-0 293.5872 203.16845)">· NLP 识别</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 8.2px; font-family: 'Times New Roman', 'SimSun'; text-anchor: start; fill: #222222" x="293.5872" y="219.035672" transform="rotate(-0 293.5872 219.035672)">· 结果降级</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 7.4px; font-family: 'Times New Roman', 'SimSun'; text-anchor: middle; fill: #6b7280" x="205.2" y="251.69328" transform="rotate(-0 205.2 251.69328)">注：共 6 个模块、21 个子功能，标“扩展”的 3 项为本次新增。</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p345bc44f03">
+   <rect x="4.32" y="4.32" width="401.76" height="255.024"/>
+  </clipPath>
+ </defs>
+</svg>

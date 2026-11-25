@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}企业风险指标对比 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">企业风险指标对比</h2>
+    <div class="page-sub">在本页直接搜索并添加 2–4 家企业；已选企业可点 ✕ 移除，选够就自动出图。</div>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-sm btn-outline-primary" id="btn-share">复制分享链接</button>
+    {% if rows %}<button class="btn btn-sm btn-outline-primary" data-ai-explain="compare"
+       data-ai-target="{% for x in rows %}{{ x.ent.id }}{% if not forloop.last %},{% endif %}{% endfor %}"
+       data-ai-title="企业风险指标对比">AI 解读对比</button>{% endif %}
+  </div>
+</div>
+
+<!-- ============ 选企业 ============ -->
+<div class="glass p-3 mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+    <h6 class="mb-0" style="color:#a5f3fc;letter-spacing:.1em;">① 选择对比企业（当前 {{ rows|length }}/4）</h6>
+    {% if selected %}
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:chart_compare' %}">清空重选</a>
+    {% endif %}
+  </div>
+
+  {% if selected %}
+    <div class="d-flex flex-wrap gap-2 mb-2">
+      {% for item in selected %}
+        <span class="chip d-inline-flex align-items-center gap-2" style="padding:5px 10px;">
+          {{ item.ent.firm_name|truncatechars:22 }}
+          <a href="?{% if item.remove_ids %}ids={{ item.remove_ids }}{% endif %}"
+             style="color:#f87171;text-decoration:none;font-weight:700;" title="移除">✕</a>
+        </span>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="page-sub mb-2">还没选企业。可以在下面搜索，也可以直接从推荐里点。</p>
+  {% endif %}
+
+  <form class="row g-2 align-items-end mb-2" method="get">
+    {% if selected_ids %}<input type="hidden" name="ids" value="{{ selected_ids }}">{% endif %}
+    <div class="col-md-8">
+      <label class="form-label small mb-1">搜索企业名称</label>
+      <input type="text" name="q" value="{{ keyword }}" class="form-control form-control-sm"
+             placeholder="输入关键词，回车搜索（例如：重庆 科技）">
+    </div>
+    <div class="col-md-4 d-flex gap-2">
+      <button class="btn btn-sm btn-primary flex-fill">搜索并添加</button>
+      {% if keyword %}<a class="btn btn-sm btn-outline-primary" href="?{% if selected_ids %}ids={{ selected_ids }}{% endif %}">返回推荐</a>{% endif %}
+    </div>
+  </form>
+
+  <div class="page-sub mb-2">
+    {% if keyword %}搜索结果（点“添加”加入对比）：{% else %}推荐（按风险分从高到低，点“添加”加入对比）：{% endif %}
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    {% for c in candidates %}
+      <a class="btn btn-sm btn-outline-primary" href="{{ c.add_url }}">
+        + {{ c.ent.firm_name|truncatechars:18 }}
+        {% if c.score %}<span class="muted">（{{ c.score|floatformat:1 }} 分）</span>{% endif %}
+      </a>
+    {% empty %}
+      <span class="page-sub">{% if keyword %}没有匹配的企业，换个关键词试试。{% else %}企业库暂时没有可添加的对象。{% endif %}</span>
+    {% endfor %}
+  </div>
+  {% if rows|length < 2 %}
+    <div class="page-sub mt-2" style="color:#fbbf24;">至少选择 2 家才能对比，当前 {{ rows|length }} 家。</div>
+  {% endif %}
+</div>
+
+{% if not rows %}
+  <div class="glass p-4">
+    <p class="mb-2">选好企业后，这里会出现雷达图、分组柱和指标对照表。</p>
+    <p class="page-sub mb-0">也可以直接把链接分享给别人：<code>/chart/compare/?ids=10190,10192</code></p>
+  </div>
+{% else %}
+  <div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3">
+      <div class="stat-card"><div class="label">对比企业</div><div class="num">{{ stats.count }}<span class="unit">家</span></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card"><div class="label">最高分</div><div class="num">{{ stats.max }}</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card"><div class="label">最低分</div><div class="num">{{ stats.min }}</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card"><div class="label">平均分</div><div class="num">{{ stats.avg }}</div></div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">四维雷达对比</h6>
+        <div class="page-sub mb-1" style="font-size:11px;">读法：形状差异比面积更重要；某角外凸即该企业在该维度更危险。</div>
+        <div id="chart-radar" class="chart-box"></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">四维分组柱对比</h6>
+        <div class="page-sub mb-1" style="font-size:11px;">读法：同色系一组，柱越高越危险；看同一维度上谁最高。</div>
+        <div id="chart-bars" class="chart-box"></div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="glass p-3">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;">指标对照</h6>
+        <div class="page-sub mb-1" style="font-size:11px;">读法：风险分是四维均值；出现“总分不高但某维很高”要单独提示。</div>
+        <div class="table-responsive mt-2">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr><th>企业名称</th><th>风险分</th><th>财务</th><th>经营</th><th>合规</th><th>质量</th></tr>
+            </thead>
+            <tbody>
+              {% for x in rows %}
+                <tr>
+                  <td>{{ x.ent.firm_name }}</td>
+                  <td class="mono">{{ x.risk.total_risk_score|floatformat:2 }}</td>
+                  <td class="mono">{{ x.risk.financial_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.operation_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.compliance_score|floatformat:0 }}</td>
+                  <td class="mono">{{ x.risk.quality_score|floatformat:0 }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("btn-share") && document.getElementById("btn-share").addEventListener("click", function () {
+  const url = window.location.origin + window.location.pathname + window.location.search;
+  navigator.clipboard.writeText(url).then(() => {
+    this.textContent = "已复制";
+    setTimeout(() => this.textContent = "复制分享链接", 1500);
+  });
+});
+</script>
+{% if rows %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+const DATA = {{ chart_json|safe }};
+const NAMES = DATA.map(x => x.name.length > 10 ? x.name.slice(0, 10) + "…" : x.name);
+
+makeChart(document.getElementById("chart-radar"), {
+  tooltip: {trigger: "item"},
+  legend: Object.assign({bottom: 0, type: "scroll"}, CHART_BASE.legend),
+  radar: {
+    indicator: ["财务", "经营", "合规", "质量"].map(n => ({name: n, max: 100})),
+    radius: "62%", center: ["50%", "46%"],
+    axisName: {color: "#93a8c4"},
+    splitLine: {lineStyle: {color: "rgba(103,232,249,.12)"}},
+    splitArea: {areaStyle: {color: ["rgba(34,211,238,.03)", "transparent"]}},
+    axisLine: {lineStyle: {color: "rgba(103,232,249,.12)"}}
+  },
+  series: [{type: "radar", symbolSize: 4,
+    data: DATA.map((x, i) => ({name: NAMES[i], value: x.values}))}]
+});
+
+makeChart(document.getElementById("chart-bars"), {
+  tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+  legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+  grid: {left: 46, right: 16, top: 24, bottom: 70},
+  xAxis: Object.assign({type: "category", data: ["财务", "经营", "合规", "质量"],
+    axisLabel: {color: "#93a8c4"}}, axisStyle()),
+  yAxis: Object.assign({type: "value", max: 100}, axisStyle()),
+  series: DATA.map((x, i) => ({
+    name: NAMES[i], type: "bar", barWidth: "16%",
+    data: x.values
+  }))
+});
+</script>
+{% endif %}
+{% endblock %}

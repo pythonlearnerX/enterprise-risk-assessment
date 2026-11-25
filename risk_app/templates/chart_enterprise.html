@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}企业可视化 · 企业风险评估系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div>
+    <h2 class="page-title mb-1">企业数据可视化</h2>
+    <div class="page-sub">实时读取 MySQL；<b>点扇区/柱体可下钻到对应企业列表</b>，悬停看明细，支持导出 SVG / PNG。</div>
+  </div>
+  <span class="chip">企业 {{ s.enterprise_count }} 家</span>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <a class="stat-card d-block stat-link" href="{% url 'risk_app:enterprise_list' %}">
+      <div class="label">企业总数 <span class="go">查看 →</span></div>
+      <div class="num">{{ s.enterprise_count }}</div>
+    </a>
+  </div>
+  {% for name, n in s.status %}
+    <div class="col-6 col-lg-3">
+      <a class="stat-card d-block stat-link"
+         href="{% url 'risk_app:enterprise_list' %}?status={% if name == '在营' %}1{% elif name == '注销' %}2{% elif name == '吊销' %}3{% endif %}">
+        <div class="label">{{ name }} <span class="go">查看 →</span></div>
+        <div class="num">{{ n }}</div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-status">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">经营状态分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="status" data-ai-title="经营状态分布">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：环形占比看结构；在营比例高说明存续主体为主，注销/吊销才是“已退出”风险。</div>
+      <div id="chart-status" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-capital">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">注册资本区间</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="capital" data-ai-title="注册资本区间">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：左偏说明小微主体多；大资本占比低，用均值会被极端值拉高。</div>
+      <div id="chart-capital" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="glass p-3" id="box-year">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">成立年份分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="year" data-ai-title="成立年份分布">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：峰值在 2015–2019，说明样本以近十年注册主体为主，老企业样本少、结论要谨慎。</div>
+      <div id="chart-year" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-org">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">登记机关 Top 10</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="org" data-ai-title="登记机关 Top10">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：区域集中度——头部机关管辖企业多，监管资源与风险分布高度相关。</div>
+      <div id="chart-org" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-topcap">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">注册资本 Top 10 企业</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="topcap" data-ai-title="注册资本 Top10 企业">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：头部企业资本量级差一个数量级，单看金额会掩盖风险差异。</div>
+      <div id="chart-topcap" class="chart-box"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass p-3" id="box-type">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 style="color:#a5f3fc;letter-spacing:.1em;" class="mb-0">企业类型分布</h6>
+        <button class="btn btn-sm btn-outline-primary" data-ai-explain="chart_enterprise" data-ai-target="type" data-ai-title="企业类型分布">AI 解读</button>
+        <div class="d-flex gap-2">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'risk_app:enterprise_list' %}">列表</a>
+          <button class="btn btn-sm btn-outline-primary" data-export="svg">SVG</button>
+          <button class="btn btn-sm btn-outline-primary" data-export="png">PNG</button>
+        </div>
+      </div>
+      <div class="page-sub mb-1" style="font-size:11px;">读法：代码 1100/1151 占绝大多数，说明样本以有限责任公司为主，类型间可比性有限。</div>
+      <div id="chart-type" class="chart-box"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/charts_theme.js' %}"></script>
+<script>
+fetch("{% url 'risk_app:chart_data_enterprise' %}").then(r => r.json()).then(function (d) {
+  const c1 = makeChart(document.getElementById("chart-status"), {
+    tooltip: {trigger: "item", formatter: "{b}<br/>{c} 家（{d}%）"},
+    legend: Object.assign({bottom: 0}, CHART_BASE.legend),
+    series: [{
+      type: "pie", radius: ["42%", "68%"], center: ["50%", "46%"],
+      itemStyle: {borderColor: "#0b1220", borderWidth: 2},
+      label: {color: "#cbd5e1", formatter: "{b}\n{d}%"},
+      data: d.status
+    }]
+  });
+  bindExport(document.getElementById("box-status"), c1, "企业经营状态分布");
+
+  const c2 = makeChart(document.getElementById("chart-capital"), {
+    tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+    grid: {left: 50, right: 20, top: 30, bottom: 40},
+    xAxis: Object.assign({type: "category", data: d.capital.labels}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    series: [{
+      type: "bar", data: d.capital.values, barWidth: "46%",
+      itemStyle: {borderRadius: [4, 4, 0, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+          [{offset: 0, color: "#22d3ee"}, {offset: 1, color: "rgba(34,211,238,.18)"}])},
+      label: {show: true, position: "top", color: "#93a8c4", fontSize: 11}
+    }]
+  });
+  bindExport(document.getElementById("box-capital"), c2, "企业注册资本区间");
+
+  const c3 = makeChart(document.getElementById("chart-year"), {
+    tooltip: {trigger: "axis"},
+    grid: {left: 50, right: 20, top: 30, bottom: 50},
+    xAxis: Object.assign({type: "category", data: d.year.labels, axisLabel: {rotate: 30, color: "#93a8c4"}}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    series: [{
+      type: "bar", data: d.year.values, barWidth: "52%",
+      itemStyle: {borderRadius: [4, 4, 0, 0],
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,
+          [{offset: 0, color: "#5eead4"}, {offset: 1, color: "rgba(94,234,212,.15)"}])}
+    }]
+  });
+  bindExport(document.getElementById("box-year"), c3, "企业成立年份分布");
+
+  // 4 登记机关 Top10
+  const c4 = makeChart(document.getElementById("chart-org"), {
+    tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+    grid: {left: 150, right: 30, top: 20, bottom: 30},
+    xAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    yAxis: Object.assign({type: "category", data: d.orgs.labels.slice().reverse(), axisLabel: {color: "#93a8c4", fontSize: 10}}, axisStyle()),
+    series: [{type: "bar", data: d.orgs.values.slice().reverse(), barWidth: "55%",
+      itemStyle: {borderRadius: [0, 4, 4, 0], color: "#22d3ee"}}]
+  });
+  bindExport(document.getElementById("box-org"), c4, "登记机关Top10");
+
+  // 5 注册资本 Top10 企业
+  const c5 = makeChart(document.getElementById("chart-topcap"), {
+    tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+    grid: {left: 60, right: 20, top: 30, bottom: 80},
+    xAxis: Object.assign({type: "category", data: d.top_cap.labels.map(n => n.length > 8 ? n.slice(0, 8) + "…" : n),
+      axisLabel: {rotate: 35, color: "#93a8c4", fontSize: 10}}, axisStyle()),
+    yAxis: Object.assign({type: "value", name: "万元"}, axisStyle()),
+    series: [{type: "bar", data: d.top_cap.values, barWidth: "50%",
+      itemStyle: {borderRadius: [4, 4, 0, 0], color: "#5eead4"}}]
+  });
+  bindExport(document.getElementById("box-topcap"), c5, "注册资本Top10企业");
+
+  // 6 企业类型分布（横向条形，避免饼图标签重叠）
+  const c6 = makeChart(document.getElementById("chart-type"), {
+    tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
+    grid: {left: 90, right: 40, top: 20, bottom: 30},
+    xAxis: Object.assign({type: "value", name: "企业数"}, axisStyle()),
+    yAxis: Object.assign({type: "category", data: d.types.labels.slice().reverse(),
+      axisLabel: {color: "#93a8c4", fontSize: 11}}, axisStyle()),
+    series: [{type: "bar", data: d.types.values.slice().reverse(), barWidth: "55%",
+      itemStyle: {borderRadius: [0, 4, 4, 0], color: "#818cf8"},
+      label: {show: true, position: "right", color: "#cbd5e1"}}]
+  });
+  bindExport(document.getElementById("box-type"), c6, "企业类型分布");
+
+  const ENT = "{% url 'risk_app:enterprise_list' %}";
+  const STATUS_MAP = {"在营": "1", "注销": "2", "吊销": "3"};
+  const CAP_MAP = {"0–100 万": "0-100", "100–500 万": "100-500",
+                   "500–1000 万": "500-1000", "1000 万以上": "1000+"};
+  const YEAR_MAP = {"1990 年前": "pre1990", "1990–1994": "1990-1994", "1995–1999": "1995-1999",
+                    "2000–2004": "2000-2004", "2005–2009": "2005-2009", "2010–2014": "2010-2014",
+                    "2015–2019": "2015-2019", "2020–2024": "2020+"};
+  if (c1) c1.on("click", p => { const v = STATUS_MAP[p.name]; if (v) location.href = ENT + "?status=" + v; });
+  if (c2) c2.on("click", p => { const v = CAP_MAP[p.name]; if (v) location.href = ENT + "?cap=" + encodeURIComponent(v); });
+  if (c3) c3.on("click", p => { const v = YEAR_MAP[p.name]; if (v) location.href = ENT + "?year=" + encodeURIComponent(v); });
+  if (c4) c4.on("click", p => { location.href = ENT + "?org=" + encodeURIComponent(p.name); });
+  if (c5) c5.on("click", p => { const name = d.top_cap.labels[p.dataIndex]; if (name) location.href = ENT + "?keyword=" + encodeURIComponent(name); });
+  if (c6) c6.on("click", p => { location.href = ENT + "?type=" + encodeURIComponent(p.name); });
+
+
+});
+</script>
+{% endblock %}

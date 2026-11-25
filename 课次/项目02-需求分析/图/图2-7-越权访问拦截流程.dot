@@ -1,0 +1,14 @@
+digraph G {
+  graph [rankdir=TB, fontname="Microsoft YaHei", fontsize=11, nodesep=0.55, ranksep=0.32, pad=0.15];
+  node [fontname="Microsoft YaHei", fontsize=10, penwidth=1.0, shape=box, style="rounded,filled", fillcolor="#EAF1FB"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#555555", arrowsize=0.7];
+  start [shape=ellipse, style=filled, fillcolor="#E8F5E9", label="开始"];
+  end [shape=ellipse, style=filled, fillcolor="#FDE7E7", label="结束"];
+
+  start -> access; access [label="用户访问页面 URL"];
+  access -> login [label=" "]; login [label="是否已登录?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  login -> redirect [label=" 否"]; redirect [label="跳转登录页并记录 next 参数"]; redirect -> end;
+  login -> role [label=" 是"]; role [label="当前角色是否有权限?", shape=diamond, style="filled", fillcolor="#FFF4E0"];
+  role -> deny [label=" 否"]; deny [label="返回 403 页面，不泄露数据"]; deny -> end;
+  role -> allow [label=" 是"]; allow [label="正常执行并返回页面"]; allow -> end;
+}

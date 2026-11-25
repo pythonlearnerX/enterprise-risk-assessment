@@ -1,0 +1,262 @@
+重庆工程学院
+实训指导书
+课程名称：模型开发综合实训
+课程代码：20262011
+课程归属：人工智能与计算机学院
+适用专业：智能科学与技术
+编 制 人：王恒达
+审 核 人：
+审 批 人：
+编制日期：2026 年 9 月
+教务处制
+实训项目1  环境安装与数据集梳理
+实训学时：4学时（第1周 课次1）    实训类型：综合性    支撑课程目标：1、2、3
+一、实训目的
+通过本次实训，应达到以下目标：
+1. 能描述“企业风险评估系统”的业务背景、用户角色与六大功能模块，明确本课程以真实业务项目为载体的实训主线。
+2. 能独立完成 Python 3.10+、MySQL 8.0、PyCharm 及虚拟环境的安装、配置与验证，并能依据报错信息定位常见的环境问题。
+3. 掌握 CSV 数据集的读取方法，能对照字段定义表核对企业工商信息（59 列）与风险评级信息（19 列）字段的含义、类型与取值约定。
+4. 能运用 pandas 完成数据预览、缺失值检查、数值分布统计与类别分布统计，形成规范的《数据集梳理记录》。
+5. 养成“先验证环境、再动手编码”“先看清数据、再做统计”的工程习惯，具备数据合规采集与使用的意识。
+二、实训内容
+（一）实训载体：企业风险评估系统
+本次实训以“企业风险评估系统”为项目载体。该系统面向银行信贷、供应链金融、投资尽调等场景，为业务人员在放款或合作前提供企业风险核查能力。典型业务流程为：输入企业名称或统一社会信用代码 → 调取企业工商注册信息 → 调取司法与经营风险指标 → 按模型计算风险得分与风险等级 → 自动生成风险分析报告 → 借助大模型与本地 NLP 模型给出风险预估与文本风险识别结论。
+系统采用 B/S 架构与 Django 的 MTV 设计模式，后端使用 Python + Django + ORM 完成业务逻辑与数据访问，数据库使用 MySQL 8.0，前端使用 HTML + Bootstrap + ECharts 完成页面渲染与可视化，AI 部分包含“调用大模型平台”与“Docker 部署本地轻量化 NLP 模型”两条技术路线。
+系统共划分六个核心业务模块，如表 1-1 所示。本次实训涉及的环境安装与数据集梳理是全流程的起点，为后续各模块开发提供环境与数据基础。
+表 1-1  系统六大核心业务模块
+（二）开发环境与工具链
+本课程统一使用表 1-2 所列的开发环境。安装前先确认本机操作系统的位数与磁盘剩余空间（建议 20GB 以上），并将所有软件安装在纯英文路径下，避免中文与空格路径引发的编码和路径解析问题。
+表 1-2  开发环境与版本要求
+（三）实训数据集
+实训数据位于项目 code/dataset 目录，包含企业工商注册信息与企业风险评级基础信息两张宽表，每张表各 10000 条记录，另配有样本文件与字段定义说明表。数据为脱敏后的真实业务数据结构，字段命名遵循数仓的分层规范（dwd 为明细层、ads 为应用数据层）。
+表 1-3  实训数据集说明
+两张表通过企业唯一标识（企业表的 id/firm_eid 与风险表的 id）以及企业名称 name 建立关联，是后续建立外键关系、实现“企业详情页联动风险指标”的数据基础。12 项风险指标的取值含义如表 1-4 所示，理解这些含义是项目12风险评分算法的前提。
+表 1-4  12 项风险指标含义
+（四）实训任务
+1. 任务 1：完成 Python、MySQL、PyCharm、虚拟环境的安装与配置，逐项截图验证。
+2. 任务 2：在 MySQL 中创建 risk_assessment 数据库与 risk_user 专用账号，并完成连接测试。
+3. 任务 3：对照字段定义表核对两张数据表的字段含义、数据类型与取值范围，记录数据质量问题。
+4. 任务 4：编写并运行数据集梳理脚本 dataset_process.py，输出数据预览与统计结果。
+三、实训原理与流程
+（一）核心概念
+表 1-5  本次实训涉及的核心概念
+（二）总体流程
+本次实训的总体流程为：环境准备 → 工程目录初始化 → 数据集获取与字段核对 → 数据质量检查 → 统计展示 → 成果整理与提交。各环节的产出与验收要点见表 1-6。
+表 1-6  实训流程与产出
+（三）关键步骤
+步骤 1：安装 Python 并创建虚拟环境
+从 Python 官网下载 3.10 及以上版本的 64 位安装包，安装时务必勾选 “Add Python to PATH”。安装完成后打开命令行，依次执行以下命令完成验证与虚拟环境创建。
+python --version                 # 预期输出 Python 3.10.x 及以上
+where python                      # 确认解释器路径指向预期安装目录
+cd /d D:\risk_project             # 进入项目根目录（自定义）
+python -m venv venv               # 创建虚拟环境，生成 venv 目录
+venv\Scripts\activate             # 激活虚拟环境，命令行前缀出现 (venv)
+python -m pip install --upgrade pip
+pip --version                     # 确认 pip 已指向 venv 内的版本
+说明：创建虚拟环境时若不写路径，默认在当前目录生成 venv 文件夹；激活成功后命令行前缀显示 (venv)。若 PowerShell 提示“禁止运行脚本”，需先执行 set-ExecutionPolicy -Scope CurrentUser RemoteSigned，或改用 cmd 命令行操作。
+步骤 2：安装与初始化 MySQL 8.0
+下载 MySQL 8.0 安装包，选择 “Server only” 或 “Developer Default” 安装类型；在配置阶段设置 root 密码、选择 “MySQL as a Service” 以便开机自启，字符集选择 utf8mb4。安装完成后验证服务状态与登录。
+net start mysql                   # 启动 MySQL 服务（服务名以安装时为准）
+mysql -u root -p                  # 输入 root 密码进入 MySQL 控制台
+SELECT VERSION();                 # 预期输出 8.0.x
+SHOW DATABASES;                   # 查看已有数据库
+EXIT;
+常见问题：若 net start mysql 提示服务名无效，在“服务”管理器中查找实际服务名（如 MySQL80）；若忘记 root 密码，可通过跳过权限校验的方式重置，安装时建议将密码记录在实验报告中。
+步骤 3：创建数据库与专用账号
+为符合最小权限原则，禁止业务代码使用 root 直接连接数据库。执行以下 SQL 创建数据库与专用账号，该账号与密码将写入 Django 的 settings.py。
+CREATE DATABASE risk_assessment
+DEFAULT CHARACTER SET utf8mb4
+COLLATE utf8mb4_general_ci;
+CREATE USER 'risk_user'@'localhost' IDENTIFIED BY 'risk123456';
+GRANT ALL PRIVILEGES ON risk_assessment.* TO 'risk_user'@'localhost';
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR 'risk_user'@'localhost';   -- 验证授权结果
+步骤 4：安装 IDE 与项目依赖
+安装 PyCharm 社区版或 VS Code，将项目解释器指定为步骤 1 创建的 venv\Scripts\python.exe。随后在已激活虚拟环境的终端中安装本项目所需依赖，并导出依赖清单便于环境重建。
+pip install django==4.2 pymysql pandas fpdf2 requests
+pip list                          # 检查关键依赖是否安装成功
+pip freeze > requirements.txt     # 导出依赖清单（提交成果之一）
+步骤 5：组织数据集目录并核对字段
+在项目中建立 dataset 目录，放置两张全量数据表与对应的样本文件，字段定义说明表单独归档。工程目录结构如下，其中 dataset_process.py 为本次实训需要编写的脚本。
+risk_project/
+├── venv/                            # 虚拟环境
+├── dataset/
+│   ├── dwd_essential_info_commercial_reg_info.csv        # 企业工商数据（10000 条）
+│   ├── dwd_essential_info_commercial_reg_info_sample.csv # 样本
+│   ├── ads_company_rating_basis.csv                      # 风险评级数据（10000 条）
+│   ├── ads_company_rating_basis_sample.csv               # 样本
+│   ├── 企业基本信息字段定义.xlsx
+│   └── 企业基准风险信息字段表.xlsx
+├── dataset_process.py               # 数据集梳理脚本（本次任务4）
+├── requirements.txt
+└── README.md
+字段核对要求：从企业表中选择名称、信用代码、法人、注册资本、成立日期、经营状态、行业、省份城市、经纬度等关键字段，逐一记录其英文名、中文名、数据类型与典型取值；对风险表逐一核对 12 项指标与 4 项企业属性。核对结果填入表 1-7。
+表 1-7  字段核对记录模板（示例）
+步骤 6：阅读并运行数据集梳理脚本
+工程已提供 dataset_process.py，共 8 个函数：企业数据、风险数据各一组，每组依次做“加载 → 预览 → 两项统计”，最后在 main() 中按顺序调用。下面按实际代码给出脚本骨架（函数体与字段映射见 code/dataset_process.py）。
+# -*- coding: utf-8 -*-
+"""数据集梳理脚本：读取企业工商数据与风险评级数据，完成预览与统计"""
+import os
+import pandas as pd
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATASET_DIR = os.path.join(BASE_DIR, 'dataset')
+ENTERPRISE_FULL = ENTERPRISE_SAMPLE = os.path.join(
+DATASET_DIR, 'dwd_essential_info_commercial_reg_info_1w.csv')
+RISK_FULL = RISK_SAMPLE = os.path.join(
+DATASET_DIR, 'ads_company_rating_basis_1w.csv')
+# ENTERPRISE_CN、RISK_CN：字段英文名 → 中文名（见源码）
+def load_enterprise_data(use_sample=True):
+"""读取企业工商 CSV，统一 dtype=str，避免编号类字段被转成数字"""
+path = ENTERPRISE_SAMPLE if use_sample else ENTERPRISE_FULL
+if not os.path.exists(path):
+raise FileNotFoundError(f"数据文件不存在: {path}")
+df = pd.read_csv(path, dtype=str, encoding='utf-8')
+print(f"[企业数据] 加载完成，共 {len(df)} 条记录，"
+f"{len(df.columns)} 个字段")
+return df
+def preview_enterprise(df, n=5):
+"""按中文列名打印前 n 条，并输出数据形状"""
+def show_enterprise_category(df):
+"""统计1：企业类别分布（E=企业，P=个体户）"""
+def show_enterprise_status(df):
+"""统计2：经营状态分布（1=在营，2=注销，3=吊销）"""
+def load_risk_data(use_sample=True):
+"""读取风险评级 CSV，统一 dtype=str"""
+path = RISK_SAMPLE if use_sample else RISK_FULL
+if not os.path.exists(path):
+raise FileNotFoundError(f"数据文件不存在: {path}")
+df = pd.read_csv(path, dtype=str, encoding='utf-8')
+print(f"[风险数据] 加载完成，共 {len(df)} 条记录，"
+f"{len(df.columns)} 个字段")
+return df
+def preview_risk(df, n=5):
+"""按中文列名打印前 n 条"""
+def show_risk_indicators(df):
+"""统计1：四类风险指标（裁判 / 立案 / 被立案 / 被执行）均值概览"""
+def show_risk_summary(df):
+"""统计2：12 项指标总体概况"""
+def main():
+ent_df = load_enterprise_data(use_sample=True)
+preview_enterprise(ent_df)
+show_enterprise_category(ent_df)
+show_enterprise_status(ent_df)
+risk_df = load_risk_data(use_sample=True)
+preview_risk(risk_df)
+show_risk_indicators(risk_df)
+show_risk_summary(risk_df)
+if __name__ == '__main__':
+main()
+步骤 7：运行脚本并解读结果
+在 PyCharm 中运行 dataset_process.py（或在已激活虚拟环境的终端执行 python dataset_process.py），观察并记录以下输出：数据规模是否为 10000 条、关键字段是否存在缺失、企业类别的 E/P 分布、经营状态的 1/2/3 分布、四类风险指标的非零占比。
+结果解读要点：
+（1）企业类别中 E（企业）与 P（个体户）的比例决定了后续列表页筛选下拉的取值设计。
+（2）经营状态以 1（在营）为主、存在部分 2（注销）与 3（吊销），说明系统必须对非在营企业做醒目标识。
+（3）多数企业的 12 项风险指标为 0，说明“无司法记录”的企业占多数，风险评分算法必须以“扣分制”而非“加分制”设计，否则会把低风险企业误判为高风险。
+（4）注册资本、成立日期等字段存在空值，导入数据库时必须做类型转换与空值兜底，这一结论直接指导项目 4 的数据导入脚本设计。
+（四）学时分配
+表 1-8  学时分配
+四、实训成果要求
+本次实训需提交以下成果，作为项目实训阶段 1 的过程性材料：
+1. 代码成果：dataset_process.py，包含字段映射字典、数据读取、质量检查、分布统计四部分功能，代码规范、关键语句有注释。
+2. 环境验证截图：python --version 输出、虚拟环境激活后的终端前缀、MySQL 版本与数据库列表、requirements.txt 内容。
+3. 运行结果截图：脚本输出的数据规模、字段预览、缺失值统计、类别分布与四类指标统计结果。
+4. 《数据集梳理记录》：按表 1-7 的模板整理不少于 15 个关键字段的核对结果，并给出 3 条以上数据质量问题及处理建议。
+提交方式：代码与截图打包为“学号-姓名-项目1”压缩包，提交至学习通对应作业；同时将代码提交到小组 Git 仓库，提交信息需说明本次改动内容。
+五、其他说明
+（一）环境要求
+1. CPU i5 及以上、内存 16GB 及以上、磁盘剩余空间 20GB 以上；如后续需本地运行 Docker 与数据库，建议内存 16GB 以上。
+2. 操作系统为 Windows 10/11 或 Ubuntu 20.04 及以上，所有软件安装在纯英文路径下。
+3. MySQL 服务需保持开机自启，端口 3306 未被占用；如与已有数据库冲突，可在安装时改为 3307 并同步修改 settings.py。
+（二）常见问题
+表 1-9  常见问题与处理办法
+（三）注意事项
+1. 实验数据为脱敏数据，仅可用于本课程实训，不得对外传播或用于商业用途；这既是课程纪律，也是《数据安全法》对数据处理活动的基本要求。
+2. 所有依赖必须安装在虚拟环境中，不得污染全局 Python 环境；每次开发前先激活虚拟环境。
+3. 数据库账号与密码不得硬编码在公开仓库中，提交代码前检查是否包含敏感信息。
+4. 环境配置过程建议以文字+截图方式记录，形成个人《环境搭建记录》，便于后续环境重建与问题排查。
+（四）参考资料
+1. Python 官方文档：https://docs.python.org/zh-cn/3/
+2. MySQL 8.0 参考手册：https://dev.mysql.com/doc/refman/8.0/en/
+3. pandas 官方文档：https://pandas.pydata.org/docs/
+4. Django 官方文档（安装与快速入门）：https://docs.djangoproject.com/zh-hans/4.2/intro/install/
+5. 课程教材《Python Django 开发实战》（张虎）第 1~2 章：开发环境与项目结构。
+
+--- TABLE 0 ---
+序号 | 模块名称 | 核心功能 | 对应实训项目
+1 | 企业数据管理模块 | 企业工商信息的录入、查询、详情浏览，支持关键字检索、类别与经营状态筛选、分页 | 项目4、7、8
+2 | 数据可视化模块 | 企业数据、风险指标的多维图表展示（饼图、柱状图、雷达图、对比图） | 项目10、11
+3 | 风险计算与报告模块 | 按四维度扣分制计算风险得分、判定风险等级、生成并下载风险报告 | 项目12
+4 | 用户权限管理模块 | 用户登录认证、会话管理、普通用户与管理员的分级权限控制、后台管理 | 项目6、13
+5 | AI 风险预估模块 | 对接开源大模型平台，对企业进行多维度智能风险评估与建议输出 | 项目14
+6 | 模型部署展示模块 | Docker 部署轻量化 NLP 模型，实现文本风险词识别与前端可视化展示 | 项目15
+
+--- TABLE 1 ---
+类别 | 组件 | 推荐版本 | 用途说明
+操作系统 | Windows 10/11 或 Ubuntu 20.04+ | 64 位 | 提供开发与运行环境
+编程语言 | Python | 3.10 及以上 | Django 与数据处理脚本的运行环境
+数据库 | MySQL | 8.0 及以上 | 存储企业工商信息、风险指标、用户与会话数据
+IDE | PyCharm 社区版 / VS Code | 2023 及以上 | 代码编写、调试与终端操作
+Web 框架 | Django | 4.2 LTS | MTV 架构、ORM、认证与后台管理
+数据库驱动 | PyMySQL | 1.0 及以上 | Django 连接 MySQL 的驱动
+数据处理 | pandas | 1.5 及以上 | CSV 读取、清洗与统计
+PDF 输出 | fpdf2 | 2.7 及以上 | 风险报告 PDF 生成（项目12使用）
+容器工具 | Docker Desktop | 4.20 及以上 | 本地 NLP 模型容器化部署（项目15使用）
+
+--- TABLE 2 ---
+数据文件 | 记录数 | 字段数 | 数据含义
+dwd_essential_info_commercial_reg_info.csv | 10000 | 59 | 企业工商注册明细：企业名称、统一社会信用代码、法人、注册资本、成立日期、经营状态、行业、地址、经纬度等
+ads_company_rating_basis.csv | 10000 | 19 | 企业风险评级基础：12 项司法与经营风险指标（cai_1~cai_3、s_an_1~s_an_3、li_an_1~li_an_3、zhi_1~zhi_3）及法人、注册资金、经营范围、企业类型
+*_sample.csv | 10 行左右 | 同上 | 字段结构相同的小样本，用于快速验证读取逻辑
+企业基本信息字段定义.xlsx | — | — | 企业表 59 个字段的中文名、类型与取值说明
+企业基准风险信息字段表.xlsx | — | — | 风险表 19 个字段的中文名、类型与取值说明
+
+--- TABLE 3 ---
+维度 | 字段 | 含义 | 字段 | 含义
+财务类 | cai_1 | 近 1 年被裁判次数 | cai_2 / cai_3 | 近 2 年 / 近 3 年被裁判次数
+经营类 | s_an_1 | 近 1 年立案数 | s_an_2 / s_an_3 | 近 2 年 / 近 3 年立案数
+合规类 | li_an_1 | 近 1 年被立案次数 | li_an_2 / li_an_3 | 近 2 年 / 近 3 年被立案次数
+质量类 | zhi_1 | 近 1 年被执行次数 | zhi_2 / zhi_3 | 近 2 年 / 近 3 年被执行次数
+
+--- TABLE 4 ---
+概念 | 说明 | 在本项目中的体现
+B/S 架构 | 浏览器/服务器架构，用户通过浏览器访问系统，业务逻辑集中在服务器端 | 系统无需安装客户端，浏览器访问 http://127.0.0.1:8000 即可使用
+MTV 模式 | Django 的模型（Model）—模板（Template）—视图（View）分层架构，职责分离 | 项目4定义 Model，项目5~12编写 View 与 Template
+ORM | 对象关系映射，用 Python 类映射数据库表，用类方法与查询集替代手写 SQL | Enterprise、RiskIndicator 模型类对应 enterprise、risk_indicator 两张表
+虚拟环境 | 独立的 Python 运行环境（venv），隔离项目依赖，避免版本冲突 | 项目根目录下创建 venv，所有依赖只装入该环境
+宽表 | 字段数量多、以单表承载多维度属性的数据表结构 | 企业表 59 列、风险表 19 列，均为典型宽表
+DataFrame | pandas 的二维表数据结构，支持按列选取、类型转换、分组统计 | 数据集梳理脚本以 DataFrame 读取 CSV 并统计
+
+--- TABLE 5 ---
+环节 | 主要工作 | 产出物
+环境准备 | 安装 Python、MySQL、IDE，创建虚拟环境并验证版本 | 版本截图
+工程初始化 | 建立 code 目录结构，安装依赖并导出 requirements.txt | 依赖清单
+数据集获取 | 拷贝数据集到 dataset 目录，区分全量文件与样本文件 | 目录截图
+字段核对 | 对照字段定义表逐个核对字段含义、类型与取值 | 字段核对记录
+质量检查 | 检查缺失值、异常值、取值范围与类别分布 | 质量检查结论
+统计展示 | 编写脚本输出数据预览与统计分析结果 | 运行截图
+
+--- TABLE 6 ---
+序号 | 英文字段名 | 中文含义 | 数据类型 | 典型取值 / 取值约定
+1 | firm_name | 企业名称 | 字符串 | “××科技有限公司××分公司”
+2 | usc_code | 统一社会信用代码 | 字符串（18位） | 91500112054286454G
+3 | firm_category | 企业类别 | 枚举 | E=企业，P=个体户
+4 | ope_status | 经营状态 | 枚举 | 1=在营，2=注销，3=吊销
+5 | est_date | 成立日期 | 日期 | 2015-06-18
+6 | cai_1 | 近 1 年被裁判次数 | 数值 | 整数，0 表示无记录
+7 | zhuce_money | 注册资本（万元） | 数值 | 可能为空，需转换处理
+
+--- TABLE 7 ---
+环节 | 内容 | 学时
+环境准备 | Python、MySQL、IDE 安装与虚拟环境配置 | 1.5
+数据集梳理 | 字段核对、数据质量检查、脚本编写与运行 | 1.5
+结果解读与提交 | 统计结果解读、问题记录与成果整理 | 1.0
+
+--- TABLE 8 ---
+现象 | 原因 | 处理办法
+python 不是内部或外部命令 | 未勾选 Add Python to PATH | 重新安装并勾选该选项，或手工将安装目录与 Scripts 目录加入系统 PATH
+venv\Scripts\activate 无法执行 | PowerShell 执行策略限制 | 执行 set-ExecutionPolicy -Scope CurrentUser RemoteSigned，或改用 cmd
+pip 安装超时 | 默认源访问缓慢 | 使用国内镜像：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple 包名
+MySQL 服务名无效 | 服务名与命令不一致 | 在“服务”中查看实际名称，如 MySQL80，再执行 net start MySQL80
+CSV 读取中文乱码 | 文件编码非 UTF-8 | 读取时指定 encoding='gbk'，或将文件另存为 UTF-8 编码
+读取时报 dtype 警告 | 未指定数据类型，编号列被推断为数值 | 读取时统一加 dtype=str，需要数值时再用 pd.to_numeric 转换
+脚本提示文件不存在 | 工作目录与数据目录不一致 | 使用 os.path.dirname(os.path.abspath(__file__)) 定位脚本所在目录，用相对路径拼接
