@@ -1,0 +1,13 @@
+asgiref==3.12.1
+defusedxml==0.7.1
+Django==6.1.2
+fonttools==4.67.0
+fpdf2==2.8.9
+numpy==2.5.4
+pandas==3.0.6
+pillow==13.0.0
+PyMySQL==1.2.3
+python-dateutil==3.0.0
+six==1.17.0
+sqlparse==0.6.0
+tzdata==2026.5
