@@ -170,6 +170,7 @@ risk_project_xuerui/
 | 讲清统计口径 | `docs/STATISTICS.md` → `统计学变量说明-答辩版.docx` |
 | 写实训报告 | `docs/REPORT-GUIDE.md` → `课次/课程总览.md` |
 | 答辩 | `00-答辩速查卡.md` → `课次/项目17-答辩PPT/README.md` |
+| 交给其他 AI / 要提示词 | `docs/AI-PROMPTS.md`（评审·改 PPT·写报告三条提示词 + 纠偏话术） |
 | 改 PPT / 评估可用性 | `docs/PPT-REVIEW.md`（AI 腔诊断 + 两条叙事线 + 非专业用户可用性七条改进） |
 | 各课次交付物 | `课次/项目NN-*/README.md` |
 
