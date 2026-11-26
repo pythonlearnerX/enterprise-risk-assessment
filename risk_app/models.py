@@ -84,6 +84,12 @@ class RiskIndicator(models.Model):
         verbose_name = "风险指标"
         verbose_name_plural = verbose_name
         ordering = ["-total_risk_score"]
+        # 性能优化 P-01：列表页最常见的「按等级筛选 + 按分数排序」
+        # 原来 key=None（全表扫 + filesort），加复合索引后走 range 扫描
+        indexes = [
+            models.Index(fields=["risk_level", "-total_risk_score"],
+                         name="idx_level_score"),
+        ]
 
 
     # ---- 评分一致性：总分变了，等级必须跟着变 ----

@@ -8,7 +8,6 @@ app_name = "risk_app"
 
 
 def login_typo(request, rest):
-    """地址栏把说明文字粘进 URL 时的兜底：/login/xxx → /login/。"""
     return redirect("risk_app:login")
 
 urlpatterns = [

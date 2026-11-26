@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.paginator import Paginator
-from django.db.models import Avg, Count, Max
+from django.db.models import Avg, Count, Max, Q
 from django.http import FileResponse, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -400,13 +400,20 @@ def risk_list(request):
             head += ["cai_1", "cai_2", "cai_3", "s_an_1", "s_an_2", "s_an_3",
                      "li_an_1", "li_an_2", "li_an_3", "zhi_1", "zhi_2", "zhi_3"]
         writer.writerow(head)
-        for r in qs.iterator():
-            row = [r.name, r.total_risk_score, r.get_risk_level_display(),
-                   r.financial_score, r.operation_score, r.compliance_score, r.quality_score]
+        # 性能优化 P-02：用 values_list 取元组，避免为 10000 行各建一个模型实例
+        base_fields = ["name", "total_risk_score", "risk_level",
+                       "financial_score", "operation_score",
+                       "compliance_score", "quality_score"]
+        extra_fields = ["cai_1", "cai_2", "cai_3", "s_an_1", "s_an_2", "s_an_3",
+                        "li_an_1", "li_an_2", "li_an_3", "zhi_1", "zhi_2", "zhi_3"]
+        fields = base_fields + (extra_fields if view == "full" else [])
+        level_label = {"low": "低风险", "medium": "中风险", "high": "高风险"}
+        for row in qs.values_list(*fields).iterator(chunk_size=2000):
+            cells = list(row[:7])
+            cells[2] = level_label.get(cells[2], cells[2])
             if view == "full":
-                row += [r.cai_1, r.cai_2, r.cai_3, r.s_an_1, r.s_an_2, r.s_an_3,
-                        r.li_an_1, r.li_an_2, r.li_an_3, r.zhi_1, r.zhi_2, r.zhi_3]
-            writer.writerow(row)
+                cells += list(row[7:])
+            writer.writerow(cells)
         return resp
 
     ab_variant = _ab_impression(request, "risk_export_cta")
@@ -1055,26 +1062,32 @@ def _district_names():
 
 
 def _map_rows():
-    """按区县聚合：企业数、高风险数、平均分、高风险占比。"""
+    """按区县聚合：企业数、高风险数、平均分、高风险占比。
+
+    性能优化 P-04：原实现把 1 万行整表取回 Python 逐行累加；
+    改为 SQL GROUP BY（38 个区县）后再做名称映射，Python 侧从 1 万次循环降到 38 次。
+    """
     names = _district_names()
-    rows = {}
-    for r in RiskIndicator.objects.values("total_risk_score", "risk_level",
-                                          "enterprise__district"):
+    agg = (RiskIndicator.objects
+           .values("enterprise__district")
+           .annotate(count=Count("id"),
+                     high=Count("id", filter=Q(risk_level="high")),
+                     avg_score=Avg("total_risk_score"))
+           .order_by("-count"))
+    out = []
+    for r in agg:
         code = str(r["enterprise__district"] or "")
         if code not in names:
             continue
-        d = rows.setdefault(code, {"code": code, "name": names[code],
-                                   "count": 0, "high": 0, "score_sum": 0.0})
-        d["count"] += 1
-        d["score_sum"] += float(r["total_risk_score"])
-        if r["risk_level"] == "high":
-            d["high"] += 1
-    out = []
-    for d in rows.values():
-        d["avg_score"] = round(d["score_sum"] / d["count"], 2) if d["count"] else 0
-        d["high_rate"] = round(d["high"] / d["count"] * 100, 2) if d["count"] else 0
-        d.pop("score_sum")
-        out.append(d)
+        count = r["count"] or 0
+        out.append({
+            "code": code,
+            "name": names[code],
+            "count": count,
+            "high": r["high"] or 0,
+            "avg_score": round(float(r["avg_score"] or 0), 2),
+            "high_rate": round((r["high"] or 0) / count * 100, 2) if count else 0,
+        })
     out.sort(key=lambda x: -x["count"])
     return out
 

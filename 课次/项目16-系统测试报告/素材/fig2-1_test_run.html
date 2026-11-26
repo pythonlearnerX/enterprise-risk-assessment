@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<style>
+ body { margin:0; background:#0b1220; }
+ .top { background:#111c30; padding:10px 14px; border-bottom:1px solid #1e3a5f;
+        font-family:Consolas,"Microsoft YaHei",sans-serif; color:#67e8f9; font-size:13px; }
+ pre { margin:0; padding:12px 14px; color:#d7e3f4;
+        font-family:Consolas,"Microsoft YaHei","Segoe UI",sans-serif;
+        font-size:12.5px; line-height:1.62; white-space:pre-wrap; }
+</style></head><body>
+<div class="top">图 2-1　功能测试执行记录（80 条自动化用例，节选）</div>
+<pre>$ python manage.py test risk_app -v 2
+test_login_page_ok (risk_app.tests.AuthTests.test_login_page_ok) ... ok
+test_anonymous_redirected (risk_app.tests.AuthTests.test_anonymous_redirected) ... ok
+test_dashboard_by_role (risk_app.tests.AuthTests.test_dashboard_by_role) ... ok
+test_count_mode_deduction (risk_app.tests.RiskCalcTests.test_count_mode_deduction) ... ok
+test_points_mode_matches_mean (risk_app.tests.RiskCalcTests.test_points_mode_matches_mean) ... ok
+test_level_threshold (risk_app.tests.RiskCalcTests.test_level_threshold) ... ok
+test_ids_multi_value (risk_app.tests.ComparePickerTests.test_ids_multi_value) ... ok
+test_level_follows_score (risk_app.tests.DataSyncTests.test_level_follows_score) ... ok
+test_pdf_export (risk_app.tests.ReportPdfTests.test_pdf_export) ... ok
+............................  (其余 71 条略)
+----------------------------------------------------------------------
+Found 80 test(s).
+System check identified no issues (0 silenced).
+Ran 80 tests in 14.885s
+
+OK</pre>
+</body></html>
