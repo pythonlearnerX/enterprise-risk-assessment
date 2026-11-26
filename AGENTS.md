@@ -62,7 +62,7 @@ python manage.py check
 | NLP 微服务 | `nlp_service/app.py` + `Dockerfile` | Flask + jieba，端口 5000 |
 | 测试 | `risk_app/tests.py` | 19 个类 / 80 条，按模块分组 |
 
-更细的「功能 → 文件 → 行号」见根目录 `00-代码地图.md`。
+更细的「功能 → 文件 → 行号」见 `docs/答辩材料/代码地图.md`，或直接开根目录 `00-答辩导航.md` 按问题查行号。
 
 ---
 
@@ -103,6 +103,6 @@ python manage.py check
 
 ## 7. 如果用户让你「写实训报告 / 改答辩 PPT」
 
-- 报告与 PPT 的既有事实（数字、结论、局限）都在 `docs/REPORT-GUIDE.md` 与 `00-答辩知识包.md`，**先读再写**，不要重新编数字；
+- 报告与 PPT 的既有事实（数字、结论、局限）都在 `docs/REPORT-GUIDE.md` 与 `docs/答辩材料/答辩知识包.md`，**先读再写**，不要重新编数字；
 - 报告要求「7 章 + 2 附录」的结构见 `课次/项目16-系统测试报告/README.md`；
 - 答辩 PPT 的图表取舍理由见 `课次/项目17-答辩PPT/README.md`（每张图都要能回答「这张图证明什么」）。

@@ -7,6 +7,8 @@
 
 ---
 
+> 答辩时先开 **`00-答辩导航.md`**：24 个常见问题 → 文件:行号，找代码比翻目录快。
+
 ## 一、这是什么
 
 一套「企业风险查询 + 评分 + 可视化 + 报告导出」的 Django Web 系统，覆盖课程实训的 6 个模块：
@@ -132,11 +134,16 @@ risk_project_xuerui/
 │
 ├── nlp_service/                 项目 15：Flask + jieba 微服务 + Dockerfile
 ├── scripts/                     环境检查、导入辅助、验证脚本
-├── docs/                        ★ 接手必读（架构、跑通、测试、统计、报告指引）
-├── 课次/                        课次文档（项目 01–17，每项一个 README + 截图）
-├── 00-代码地图.md                功能 → 文件 → 行号
-├── 00-答辩知识包.md              答辩问答 + 关键数字
-└── 00-答辩速查卡.md              开场、演示顺序、必考点
+├── docs/                        ★ 接手必读
+│   ├── 答辩材料/                代码地图（功能→行号）、答辩知识包、答辩速查卡、整理说明
+│   ├── 交接包/                  换 AI 用的单文件上下文 + 压缩包
+│   ├── ARCHITECTURE.md          架构与数据字典
+│   ├── STATISTICS.md            全部统计口径与实测值
+│   ├── RUNBOOK.md               从零跑通与排错
+│   ├── TESTING.md               测试说明
+│   └── REPORT-GUIDE.md 等       报告骨架、PPT 复盘、提示词包
+├── 课次/                        课次文档（项目 01–18，每项一个 README + 截图）
+└── 00-答辩导航.md                ★ 答辩时先开这个：问题 → 文件:行号
 ```
 
 ---
@@ -165,11 +172,11 @@ risk_project_xuerui/
 | --- | --- |
 | **让 AI 接手改造** | `AGENTS.md` → `docs/AI-HANDOFF.md` |
 | 跑起来 / 排错 | 本文件第二节 → `docs/RUNBOOK.md` |
-| 看懂代码分层 | `docs/ARCHITECTURE.md` → `00-代码地图.md` |
+| 看懂代码分层 | `docs/ARCHITECTURE.md` → `docs/答辩材料/代码地图.md` |
 | 加/改用例 | `docs/TESTING.md` |
 | 讲清统计口径 | `docs/STATISTICS.md` → `统计学变量说明-答辩版.docx` |
 | 写实训报告 | `docs/REPORT-GUIDE.md` → `课次/课程总览.md` |
-| 答辩 | `00-答辩速查卡.md` → `课次/项目17-答辩PPT/README.md` |
+| 答辩 | `docs/答辩材料/答辩速查卡.md` → `课次/项目17-答辩PPT/README.md` |
 | 交给其他 AI / 要提示词 | `docs/AI-PROMPTS.md`（评审·改 PPT·写报告三条提示词 + 纠偏话术） |
 | 改 PPT / 评估可用性 | `docs/PPT-REVIEW.md`（AI 腔诊断 + 两条叙事线 + 非专业用户可用性七条改进） |
 | 各课次交付物 | `课次/项目NN-*/README.md` |
