@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
+<style>
+ .bg{fill:#fff;}
+ .band{fill:#F4F8FD;stroke:#CBD8E6;stroke-width:1.5;rx:12;}
+ .layer{fill:#fff;stroke:#2C5F8A;stroke-width:2;rx:8;}
+ .head{fill:#1F2A44;rx:8;}
+ .t{font-family:"Microsoft YaHei";font-size:21px;fill:#1F2A44;font-weight:bold;}
+ .w{font-family:"Microsoft YaHei";font-size:20px;fill:#fff;font-weight:bold;}
+ .s{font-family:"Microsoft YaHei";font-size:16px;fill:#4A5A70;}
+ .c{font-family:"Consolas","Microsoft YaHei";font-size:15px;fill:#0E7490;}
+ .cap{font-family:"Microsoft YaHei";font-size:26px;fill:#1F2A44;font-weight:bold;}
+ .ar{stroke:#0E7490;stroke-width:2;fill:none;}
+</style>
+<rect class="bg" width="1600" height="980"/>
+<text class="cap" x="60" y="56">系统总体架构（Django MTV 分层 + 独立 NLP 微服务）</text>
+
+<rect class="band" x="60" y="90" width="1480" height="120"/>
+<rect class="head" x="60" y="90" width="240" height="120"/>
+<text class="w" x="86" y="145">表现层</text>
+<text class="w" x="86" y="178" font-size="15">浏览器</text>
+<text class="s" x="330" y="130">24 个 Django 模板 + Bootstrap 5（本地）</text>
+<text class="s" x="330" y="162">ECharts 5 图表（本地 static，断网可用）</text>
+<text class="c" x="330" y="192">templates/ · static/js · static/vendor · static/json（重庆 GeoJSON）</text>
+
+<rect class="band" x="60" y="230" width="1480" height="150"/>
+<rect class="head" x="60" y="230" width="240" height="150"/>
+<text class="w" x="86" y="290">路由层</text>
+<text class="w" x="86" y="322" font-size="15">URL → View</text>
+<text class="s" x="330" y="270">36 条路由，按业务分组：基础 / 企业 / 风险 / 可视化 / 报告 / AI / 预估 / 本地模型 / A/B / 管理 / 兜底</text>
+<text class="c" x="330" y="305">risk_project/urls.py → risk_app/urls.py（app_name = risk_app）</text>
+<text class="s" x="330" y="340">登录校验 @login_required ｜ 管理员校验 @admin_required（未登录跳登录页，无权限 403）</text>
+<text class="c" x="330" y="370">risk_app/decorators.py</text>
+
+<rect class="band" x="60" y="400" width="1480" height="170"/>
+<rect class="head" x="60" y="400" width="240" height="170"/>
+<text class="w" x="86" y="460">视图层</text>
+<text class="w" x="86" y="492" font-size="15">views.py</text>
+<text class="s" x="330" y="440">页面视图：解析 8 类筛选参数 → ORM 查询 → 组装上下文 → 渲染模板</text>
+<text class="s" x="330" y="472">接口视图：/api/chart/* 返回 JSON；导出视图：CSV / PDF</text>
+<text class="s" x="330" y="504">权限与参数校验在视图内完成，模板只控制显隐</text>
+<text class="c" x="330" y="540">enterprise_list · risk_list · chart_analysis · chart_map · ai_analyze · predict_api</text>
+
+<rect class="band" x="60" y="590" width="1480" height="160"/>
+<rect class="head" x="60" y="590" width="240" height="160"/>
+<text class="w" x="86" y="650">业务层</text>
+<text class="w" x="86" y="682" font-size="15">纯函数模块</text>
+<text class="s" x="330" y="630">评分：12 项指标 → 四维（三项均值×4）→ 总分（四维均值）→ 等级（60/80）</text>
+<text class="s" x="330" y="662">统计：分布与基尼、资本分位带、相关矩阵、卡方与残差、组内 z 分数、cohort、α 与 PC1</text>
+<text class="s" x="330" y="694">实验：md5 分桶、两比例 z 检验、样本量估算</text>
+<text class="c" x="330" y="728">risk_calc.py · analytics.py · abtest.py</text>
+
+<rect class="band" x="60" y="770" width="960" height="150"/>
+<rect class="head" x="60" y="770" width="200" height="150"/>
+<text class="w" x="86" y="830">数据层</text>
+<text class="w" x="86" y="862" font-size="15">ORM</text>
+<text class="s" x="290" y="815">MySQL 8.4（risk_assessment 库，utf8mb4，端口 3307）</text>
+<text class="s" x="290" y="847">11 张表：企业 / 风险 / 角色 / 审计 / AI 配置 / 快照 / 预警 / A/B×3 / 解读</text>
+<text class="c" x="290" y="880">models.py · 迁移 0001–0007 · 索引 idx_level_score</text>
+
+<rect class="band" x="1040" y="770" width="500" height="150"/>
+<rect class="head" x="1040" y="770" width="160" height="150"/>
+<text class="w" x="1062" y="830">外部服务</text>
+<text class="s" x="1215" y="815">NLP 微服务 Flask + jieba（Docker，端口 5000）</text>
+<text class="s" x="1215" y="847">大模型接口（用户自带 Key，超时降级）</text>
+<text class="c" x="1215" y="880">nlp_infer.py · ai_service.py</text>
+
+<path class="ar" d="M440 210 L440 230" marker-end="url(#b)"/>
+<path class="ar" d="M440 380 L440 400" marker-end="url(#b)"/>
+<path class="ar" d="M440 570 L440 590" marker-end="url(#b)"/>
+<path class="ar" d="M460 750 L460 770" marker-end="url(#b)"/>
+<path class="ar" d="M1020 845 L1040 845" marker-end="url(#b)"/>
+<defs><marker id="b" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+<path d="M0,0 L12,6 L0,12 z" fill="#0E7490"/></marker></defs>
+</svg>

@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1010" viewBox="0 0 1600 1010">
+<style>
+ .bg{fill:#fff;}
+ .box{fill:#F7FAFE;stroke:#2C5F8A;stroke-width:2;}
+ .hd{fill:#1F2A44;}
+ .t{font-family:"Microsoft YaHei";font-size:20px;fill:#fff;font-weight:bold;}
+ .f{font-family:"Consolas","Microsoft YaHei";font-size:15px;fill:#334155;}
+ .s{font-family:"Microsoft YaHei";font-size:15px;fill:#5B6B80;}
+ .r{font-family:"Microsoft YaHei";font-size:16px;fill:#0E7490;font-weight:bold;}
+ .ar{stroke:#0E7490;stroke-width:2;fill:none;}
+ .cap{font-family:"Microsoft YaHei";font-size:25px;fill:#1F2A44;font-weight:bold;}
+</style>
+<rect class="bg" width="1600" height="1010"/>
+<text class="cap" x="50" y="52">企业风险评估系统　E-R 图（11 张表，核心 3 张）</text>
+
+<!-- enterprise -->
+<rect class="box" x="50" y="95" width="370" height="300"/>
+<rect class="hd" x="50" y="95" width="370" height="46"/>
+<text class="t" x="70" y="126">enterprise　企业主体（22 字段）</text>
+<text class="f" x="70" y="172">id  (PK)</text>
+<text class="f" x="70" y="202">usc_code　统一社会信用代码</text>
+<text class="f" x="70" y="232">firm_name　企业名称</text>
+<text class="f" x="70" y="262">ope_status　经营状态 1/2/3</text>
+<text class="f" x="70" y="292">reg_cap　注册资本（万元）</text>
+<text class="f" x="70" y="322">district　区县区划码</text>
+<text class="f" x="70" y="352">est_date　成立日期</text>
+<text class="s" x="70" y="382">源数据 59 列，落库 22 个关键字段</text>
+
+<!-- risk_indicator -->
+<rect class="box" x="560" y="95" width="430" height="415"/>
+<rect class="hd" x="560" y="95" width="430" height="46"/>
+<text class="t" x="580" y="126">risk_indicator　风险记录</text>
+<text class="f" x="580" y="172">id  (PK)</text>
+<text class="f" x="580" y="202">enterprise_id  (FK)</text>
+<text class="f" x="580" y="232">cai_1 ~ cai_3　财务 3 项（0–25）</text>
+<text class="f" x="580" y="262">s_an_1 ~ s_an_3　经营 3 项</text>
+<text class="f" x="580" y="292">li_an_1 ~ li_an_3　合规 3 项</text>
+<text class="f" x="580" y="322">zhi_1 ~ zhi_3　质量 3 项</text>
+<text class="f" x="580" y="352">financial / operation / compliance /</text>
+<text class="f" x="580" y="380">quality_score　四维得分（0–100）</text>
+<text class="f" x="580" y="410">total_risk_score　综合分（四维均值）</text>
+<text class="f" x="580" y="440">risk_level　low / medium / high</text>
+<text class="s" x="580" y="478">索引：idx_level_score(risk_level, score DESC)</text>
+
+<!-- auth_user -->
+<rect class="box" x="1150" y="95" width="400" height="215"/>
+<rect class="hd" x="1150" y="95" width="400" height="46"/>
+<text class="t" x="1170" y="126">auth_user　用户（内置）</text>
+<text class="f" x="1170" y="172">id  (PK)</text>
+<text class="f" x="1170" y="202">username</text>
+<text class="f" x="1170" y="232">password　pbkdf2_sha256 哈希</text>
+<text class="f" x="1170" y="262">is_superuser / is_active / last_login</text>
+<text class="s" x="1170" y="292">不存明文口令，写操作校验 CSRF</text>
+
+<!-- user_profile -->
+<rect class="box" x="1150" y="360" width="400" height="130"/>
+<rect class="hd" x="1150" y="360" width="400" height="46"/>
+<text class="t" x="1170" y="391">user_profile　角色</text>
+<text class="f" x="1170" y="437">id  (PK)　user_id  (FK, 1:1)</text>
+<text class="f" x="1170" y="467">role　admin / normal</text>
+
+<!-- audit_log -->
+<rect class="box" x="1150" y="540" width="400" height="130"/>
+<rect class="hd" x="1150" y="540" width="400" height="46"/>
+<text class="t" x="1170" y="571">audit_log　操作审计</text>
+<text class="f" x="1170" y="617">user_id　action / target / ip</text>
+<text class="f" x="1170" y="647">导出、AI 解读、改角色均留痕</text>
+
+<!-- ai_setting -->
+<rect class="box" x="560" y="560" width="430" height="120"/>
+<rect class="hd" x="560" y="560" width="430" height="46"/>
+<text class="t" x="580" y="591">ai_setting　用户级模型配置</text>
+<text class="f" x="580" y="637">user_id　provider / base_url</text>
+<text class="f" x="580" y="665">model_name / api_key</text>
+
+<!-- ai_insight -->
+<rect class="box" x="560" y="720" width="430" height="120"/>
+<rect class="hd" x="560" y="720" width="430" height="46"/>
+<text class="t" x="580" y="751">ai_insight　AI 解读记录</text>
+<text class="f" x="580" y="797">user_id　scope / target / facts</text>
+<text class="f" x="580" y="825">answer / ok（可复核输入事实）</text>
+
+<!-- risk_snapshot -->
+<rect class="box" x="50" y="450" width="370" height="130"/>
+<rect class="hd" x="50" y="450" width="370" height="46"/>
+<text class="t" x="70" y="481">risk_snapshot　年度快照</text>
+<text class="f" x="70" y="527">enterprise_id　year / total_score</text>
+<text class="f" x="70" y="557">note＝「演示模拟（非真实历史）」</text>
+
+<!-- alert_rule -->
+<rect class="box" x="50" y="640" width="370" height="130"/>
+<rect class="hd" x="50" y="640" width="370" height="46"/>
+<text class="t" x="70" y="671">alert_rule　预警订阅</text>
+<text class="f" x="70" y="717">user_id　metric / threshold</text>
+<text class="f" x="70" y="747">level / enabled / hit_count</text>
+
+<!-- 关系 -->
+<path class="ar" d="M420 245 L560 245" marker-end="url(#a)"/>
+<text class="r" x="455" y="230">1 : N</text>
+
+<path class="ar" d="M1350 310 L1350 360" marker-end="url(#a)"/>
+<text class="r" x="1362" y="342">1 : 1</text>
+
+<path class="ar" d="M1150 425 L1130 425 L1130 620 L990 620" marker-end="url(#a)"/>
+<text class="r" x="1000" y="600">1 : N</text>
+
+<path class="ar" d="M1150 600 L1110 600 L1110 780 L990 780" marker-end="url(#a)"/>
+<text class="r" x="1000" y="760">1 : N</text>
+
+<path class="ar" d="M325 395 L325 450" marker-end="url(#a)"/>
+<text class="r" x="336" y="430">1 : N</text>
+
+<text class="s" x="50" y="880">补充：ab_experiment（实验）1 : N ab_assignment（分组）1 : N ab_event（曝光 / 转化事件）；三表按 md5(实验名:用户) 取模分桶。</text>
+<text class="s" x="50" y="912">说明：企业 1 : N 风险记录；企业 1 : N 年度快照；用户 1 : 1 角色；用户 1 : N 模型配置 / 审计日志 / AI 解读记录 / 预警订阅。</text>
+
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+<path d="M0,0 L12,6 L0,12 z" fill="#0E7490"/></marker></defs>
+</svg>

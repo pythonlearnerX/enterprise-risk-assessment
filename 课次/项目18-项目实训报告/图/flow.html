@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:#fff}</style></head><body><svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<style>
+ .bg{fill:#fff;}
+ .n{fill:#F4F8FD;stroke:#2C5F8A;stroke-width:2;rx:8;}
+ .d{fill:#FFF7E6;stroke:#C78A1E;stroke-width:2;}
+ .e{fill:#F3FBF4;stroke:#2E7D48;stroke-width:2;rx:8;}
+ .t{font-family:"Microsoft YaHei";font-size:18px;fill:#1F2A44;}
+ .b{font-family:"Microsoft YaHei";font-size:18px;fill:#1F2A44;font-weight:bold;}
+ .l{font-family:"Microsoft YaHei";font-size:15px;fill:#0E7490;font-weight:bold;}
+ .ar{stroke:#33506E;stroke-width:2;fill:none;}
+ .cap{font-family:"Microsoft YaHei";font-size:26px;fill:#1F2A44;font-weight:bold;}
+</style>
+<rect class="bg" width="1600" height="900"/>
+<text class="cap" x="60" y="56">企业风险核查主流程（含权限与降级分支）</text>
+
+<rect class="n" x="60" y="100" width="240" height="80"/><text class="t" x="82" y="148">① 打开系统首页</text>
+<rect class="d" x="380" y="100" width="260" height="80"/><text class="t" x="402" y="136">② 是否已登录？</text><text class="t" x="402" y="162" font-size="15">无会话 → 302 带 next</text>
+<rect class="n" x="720" y="100" width="240" height="80"/><text class="t" x="742" y="148">③ 登录 / 账号密码</text>
+<rect class="e" x="1040" y="100" width="260" height="80"/><text class="b" x="1062" y="148">④ 首页驾驶舱</text>
+
+<rect class="n" x="60" y="260" width="290" height="90"/><text class="t" x="82" y="298">⑤ 企业台账：8 条件</text><text class="t" x="82" y="324" font-size="15">名称/状态/资本/年份/机关…</text>
+<rect class="n" x="440" y="260" width="270" height="90"/><text class="t" x="462" y="298">⑥ 分页（带 qs_suffix）</text><text class="t" x="462" y="324" font-size="15">每页 20 条</text>
+<rect class="n" x="800" y="260" width="270" height="90"/><text class="t" x="822" y="298">⑦ 企业详情</text><text class="t" x="822" y="324" font-size="15">主体 + 关联风险</text>
+<rect class="n" x="1160" y="260" width="270" height="90"/><text class="t" x="1182" y="298">⑧ 风险详情</text><text class="t" x="1182" y="324" font-size="15">88.67 / 四维 / 12 项</text>
+
+<rect class="d" x="1160" y="420" width="270" height="90"/><text class="t" x="1182" y="458">⑨ 需要导出报告？</text><text class="t" x="1182" y="484" font-size="15">是 → 生成 PDF</text>
+<rect class="e" x="800" y="420" width="270" height="90"/><text class="b" x="822" y="458">⑩ fpdf2 绘制 A4</text><text class="t" x="822" y="484" font-size="15">0.33 s / 34 KB</text>
+<rect class="n" x="440" y="420" width="270" height="90"/><text class="t" x="462" y="458">⑪ 需要 AI 解读？</text><text class="t" x="462" y="484" font-size="15">读用户自己的 Key</text>
+<rect class="e" x="60" y="420" width="290" height="90"/><text class="b" x="82" y="458">⑫ 返回解释文本</text><text class="t" x="82" y="484" font-size="15">分数不动，事实由服务端聚合</text>
+
+<rect class="d" x="60" y="580" width="330" height="100"/><text class="t" x="82" y="618">⑬ 未配置 Key / 超时？</text><text class="t" x="82" y="646" font-size="15">是 → code=need_key / 超时提示</text>
+<rect class="e" x="460" y="580" width="330" height="100"/><text class="b" x="482" y="618">⑭ 页面降级提示</text><text class="t" x="482" y="646" font-size="15">不抛 500，主流程继续可用</text>
+<rect class="n" x="860" y="580" width="330" height="100"/><text class="t" x="882" y="618">⑮ 写入 ai_insight 表</text><text class="t" x="882" y="646" font-size="15">谁 / 哪页 / 输入事实 / 输出</text>
+<rect class="e" x="1260" y="580" width="280" height="100"/><text class="b" x="1282" y="618">⑯ 管理员复核</text><text class="t" x="1282" y="646" font-size="15">核对模型有没有编数据</text>
+
+<text class="b" x="60" y="752" font-size="16">异常分支</text>
+<text class="t" x="60" y="782" font-size="15">数据库不可用 → /health/ 返回错误信息与表名；NLP 容器停止 → 页面提示启动命令，不抛 500。</text>
+<text class="b" x="60" y="822" font-size="16">权限分支</text>
+<text class="t" x="60" y="852" font-size="15">普通用户访问 /console/ → 403 页（不是 500）；未登录访问受限页 → 302 跳登录，登录后回跳原页。</text>
+
+<path class="ar" d="M300 140 L380 140" marker-end="url(#c)"/>
+<path class="ar" d="M640 140 L720 140" marker-end="url(#c)"/>
+<path class="ar" d="M960 140 L1040 140" marker-end="url(#c)"/>
+<path class="ar" d="M200 180 L200 260" marker-end="url(#c)"/>
+<path class="ar" d="M350 305 L440 305" marker-end="url(#c)"/>
+<path class="ar" d="M710 305 L800 305" marker-end="url(#c)"/>
+<path class="ar" d="M1070 305 L1160 305" marker-end="url(#c)"/>
+<path class="ar" d="M1295 350 L1295 420" marker-end="url(#c)"/>
+<path class="ar" d="M1160 465 L1070 465" marker-end="url(#c)"/>
+<path class="ar" d="M800 465 L710 465" marker-end="url(#c)"/>
+<path class="ar" d="M440 465 L350 465" marker-end="url(#c)"/>
+<path class="ar" d="M205 510 L205 580" marker-end="url(#c)"/>
+<path class="ar" d="M390 630 L460 630" marker-end="url(#c)"/>
+<path class="ar" d="M790 630 L860 630" marker-end="url(#c)"/>
+<path class="ar" d="M1190 630 L1260 630" marker-end="url(#c)"/>
+<defs><marker id="c" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+<path d="M0,0 L12,6 L0,12 z" fill="#33506E"/></marker></defs>
+</svg>
+</body></html>
