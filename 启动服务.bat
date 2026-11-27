@@ -4,6 +4,13 @@ cd /d "%~dp0"
 set "MYSQL_BIN=D:\xueru\Documents\dsh work\_tmp\mysql84\mysql-8.4.3-winx64\bin\mysqld.exe"
 set "MYSQL_HOME=D:\xueru\Documents\dsh work\_tmp\mysql84"
 
+set "PY=%~dp0.venv\Scripts\python.exe"
+if exist "%PY%" goto :deps_ok
+echo [deps] venv not found, installing (first run, 1-2 min) ...
+python -m venv "%~dp0.venv"
+"%PY%" -m pip install -q -r "%~dp0requirements.txt" -i https://pypi.tuna.tsinghua.edu.cn/simple
+:deps_ok
+
 netstat -ano | findstr ":3307" | findstr "LISTENING" >nul
 if errorlevel 1 (
   start "MySQL84" /min "%MYSQL_BIN%" --no-defaults --basedir="%MYSQL_HOME%\mysql-8.4.3-winx64" --datadir="%MYSQL_HOME%\data" --tmpdir="%MYSQL_HOME%\tmp" --port=3307 --bind-address=127.0.0.1 --mysqlx=0 --mysql-native-password=ON
@@ -19,5 +26,5 @@ for /l %%i in (1,1,30) do (
 
 netstat -ano | findstr ":8021" | findstr "LISTENING" >nul
 if errorlevel 1 (
-  start "Django8021" /min "%~dp0.venv\Scripts\python.exe" manage.py runserver 127.0.0.1:8021 --noreload
+  start "Django8021" /min "%PY%" manage.py runserver 127.0.0.1:8021 --noreload
 )

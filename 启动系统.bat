@@ -3,6 +3,13 @@ setlocal
 cd /d "%~dp0"
 set "MYSQL_BIN=D:\xueru\Documents\dsh work\_tmp\mysql84\mysql-8.4.3-winx64\bin"
 set "MYSQL_HOME=D:\xueru\Documents\dsh work\_tmp\mysql84"
+
+set "PY=%~dp0.venv\Scripts\python.exe"
+if exist "%PY%" goto :deps_ok
+echo [deps] venv not found, installing (first run, 1-2 min) ...
+python -m venv "%~dp0.venv"
+"%PY%" -m pip install -q -r "%~dp0requirements.txt" -i https://pypi.tuna.tsinghua.edu.cn/simple
+:deps_ok
 set "PORT=8021"
 
 echo [1/3] Check MySQL 8.4 on port 3307 ...
@@ -19,7 +26,7 @@ echo [2/3] Check Django on port %PORT% ...
 netstat -ano | findstr ":%PORT%" | findstr "LISTENING" >nul
 if errorlevel 1 (
   echo     starting django ...
-  start "Django %PORT%" /min "%~dp0.venv\Scripts\python.exe" manage.py runserver 127.0.0.1:%PORT% --noreload
+  start "Django %PORT%" /min "%PY%" manage.py runserver 127.0.0.1:%PORT% --noreload
   "%SystemRoot%\System32\timeout.exe" /t 5 /nobreak >nul
 ) else (
   echo     already running
